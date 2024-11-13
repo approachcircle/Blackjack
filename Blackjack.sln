@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Desktop", "Blackjack\Blackjack.Desktop\Blackjack.Desktop.csproj", "{BA4C875B-F13B-41AF-AA93-1877C928AB9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Game", "Blackjack\Blackjack.Game\Blackjack.Game.csproj", "{78D1534D-8F49-4EF1-97C1-5ED2074779BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Game.Tests", "Blackjack\Blackjack.Game.Tests\Blackjack.Game.Tests.csproj", "{5FB2162E-8F47-4DD8-88AE-FB481D2BFC78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Resources", "Blackjack\Blackjack.Resources\Blackjack.Resources.csproj", "{C6A373A6-C412-452D-AF6F-C2C1760DD9C9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA4C875B-F13B-41AF-AA93-1877C928AB9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA4C875B-F13B-41AF-AA93-1877C928AB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA4C875B-F13B-41AF-AA93-1877C928AB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA4C875B-F13B-41AF-AA93-1877C928AB9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78D1534D-8F49-4EF1-97C1-5ED2074779BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78D1534D-8F49-4EF1-97C1-5ED2074779BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78D1534D-8F49-4EF1-97C1-5ED2074779BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78D1534D-8F49-4EF1-97C1-5ED2074779BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FB2162E-8F47-4DD8-88AE-FB481D2BFC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB2162E-8F47-4DD8-88AE-FB481D2BFC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB2162E-8F47-4DD8-88AE-FB481D2BFC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB2162E-8F47-4DD8-88AE-FB481D2BFC78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6A373A6-C412-452D-AF6F-C2C1760DD9C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6A373A6-C412-452D-AF6F-C2C1760DD9C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6A373A6-C412-452D-AF6F-C2C1760DD9C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6A373A6-C412-452D-AF6F-C2C1760DD9C9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

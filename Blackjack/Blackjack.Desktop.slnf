@@ -1,0 +1,11 @@
+﻿{
+  "solution": {
+    "path": "Blackjack.sln",
+    "projects": [
+      "Blackjack.Desktop\\Blackjack.Desktop.csproj",
+      "Blackjack.Game\\Blackjack.Game.csproj",
+      "Blackjack.Game.Tests\\Blackjack.Game.Tests.csproj",
+      "Blackjack.Resources\\Blackjack.Resources.csproj"
+    ]
+  }
+}
