@@ -3,12 +3,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osuTK;
 using osuTK.Graphics;
 
 namespace Blackjack.Game;
 
 public partial class CardModel(string card) : Container
 {
+    public static Vector2 CardSize => new(200, 300);
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -19,8 +21,8 @@ public partial class CardModel(string card) : Container
         [
             new Box
             {
-                Width = 200,
-                Height = 300,
+                Width = CardSize.X,
+                Height = CardSize.Y,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 Colour = Color4.White,

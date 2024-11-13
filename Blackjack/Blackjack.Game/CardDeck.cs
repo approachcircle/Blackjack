@@ -5,6 +5,7 @@ namespace Blackjack.Game;
 
 public static class CardDeck
 {
+    //TODO: need to add quantities to each card, and subtract them once added to a hand
     public static Dictionary<string, int> Cards =>
         new()
         {
