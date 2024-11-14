@@ -5,7 +5,7 @@ using osuTK;
 
 namespace Blackjack.Game;
 
-public partial class CardHand : FillFlowContainer
+public partial class CardHand(HandOwner handOwner) : FillFlowContainer
 {
     private static float containerPadding => -20;
 
@@ -13,11 +13,11 @@ public partial class CardHand : FillFlowContainer
     private void load()
     {
         Direction = FillDirection.Horizontal;
-        AutoSizeAxes = Axes.Y;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
+        AutoSizeAxes = Axes.Both;
+        Anchor = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre;
+        Origin = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre;
         Spacing = new Vector2(10, 0);
         MaximumSize = new Vector2(CardModel.CardSize.X + 70, CardModel.CardSize.Y);
-        Y = containerPadding;
+        Y = handOwner == HandOwner.Player ? containerPadding : -containerPadding;
     }
 }

@@ -12,30 +12,45 @@ namespace Blackjack.Game
 {
     public partial class MainScreen : Screen
     {
-        private CardHand cardHand;
-        private Button drawCardButton;
+        private CardHand playerHand;
+        private CardHand dealerHand;
+        private Button hitButton;
+        private Button standButton;
         private SpriteText score;
         private Bindable<int> bindableScore = new();
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            cardHand = new CardHand();
-            drawCardButton = new BasicButton
+            playerHand = new CardHand(HandOwner.Player);
+            dealerHand = new CardHand(HandOwner.Dealer);
+            hitButton = new BasicButton
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Text = "Draw card",
-                Action = onCardDrawRequest,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Text = "Hit",
+                Action = () => onCardDrawRequest(HandOwner.Player),
                 Width = 200,
                 Height = 100,
-                Y = -100
+                // Y = -100,
+                X = 20
+            };
+            standButton = new BasicButton
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Text = "Stand",
+                // Action = onCardDrawRequest,
+                Width = 200,
+                Height = 100,
+                // Y = -100,
+                X = -20
             };
             score = new SpriteText
             {
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre,
-                Y = 20,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                // Y = 20,
                 Font = FontUsage.Default.With(size: 48),
             };
             bindableScore.BindValueChanged(e =>
@@ -44,13 +59,19 @@ namespace Blackjack.Game
             }, true);
             InternalChildren =
             [
-                drawCardButton,
-                cardHand,
-                score
+                hitButton,
+                playerHand,
+                dealerHand,
+                score,
+                standButton
             ];
+            onCardDrawRequest(HandOwner.Player);
+            onCardDrawRequest(HandOwner.Player);
+            onCardDrawRequest(HandOwner.Dealer);
+            onCardDrawRequest(HandOwner.Dealer, true);
         }
 
-        private void onCardDrawRequest()
+        private void onCardDrawRequest(HandOwner handOwner, bool isCardFlipped = false)
         {
             bool deckEmpty = true;
             foreach (int quantity in CardDeck.CardQuantities.Values)
@@ -59,7 +80,7 @@ namespace Blackjack.Game
             }
             if (deckEmpty)
             {
-                drawCardButton
+                hitButton
                     .FadeColour(Color4.DarkRed)
                     .Delay(250)
                     .FadeColour(Color4.Gray, 250);
@@ -67,8 +88,10 @@ namespace Blackjack.Game
             }
 
             var cardDrawn = drawCard();
-            cardHand.Add(new CardModel(cardDrawn));
-            bindableScore.Value += CardDeck.CardValues[cardDrawn];
+            var cardModel = new CardModel(cardDrawn, handOwner);
+            if (isCardFlipped) cardModel.ToggleCardFlipped();
+            if (handOwner == HandOwner.Player) playerHand.Add(cardModel); else dealerHand.Add(cardModel);
+            if (handOwner == HandOwner.Player) bindableScore.Value += CardDeck.CardValues[cardDrawn];
         }
 
         private static string drawCard()

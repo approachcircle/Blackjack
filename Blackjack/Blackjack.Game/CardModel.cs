@@ -1,4 +1,5 @@
 ﻿using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -8,16 +9,20 @@ using osuTK.Graphics;
 
 namespace Blackjack.Game;
 
-public partial class CardModel(string card) : Container
+public partial class CardModel(string card, HandOwner handOwner) : Container
 {
     public static Vector2 CardSize => new(160, 260);
     private static Vector2 cardSymbolPadding => new(30, 35);
+    private Bindable<bool> isCardFlipped = new();
+    private SpriteText topLeftSymbol;
+    private SpriteText centreSymbol;
+    private SpriteText bottomRightSymbol;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
+        Anchor = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre;
+        Origin = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre;
         AutoSizeAxes = Axes.Both;
         InternalChildren =
         [
@@ -25,20 +30,20 @@ public partial class CardModel(string card) : Container
             {
                 Width = CardSize.X,
                 Height = CardSize.Y,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
+                Anchor = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre,
+                Origin = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre,
                 Colour = Color4.White,
             },
             new Box
             {
                   Width = CardSize.X - 20,
                   Height = CardSize.Y - 20,
-                  Anchor = Anchor.BottomCentre,
-                  Origin = Anchor.BottomCentre,
-                  Y = -10,
+                  Anchor = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre,
+                  Origin = handOwner == HandOwner.Player ? Anchor.BottomCentre : Anchor.TopCentre,
+                  Y = handOwner == HandOwner.Player ? -10 : 10,
                   Colour = Color4.LightPink,
             },
-            new SpriteText // symbol in top left
+            topLeftSymbol = new SpriteText
             {
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.Centre,
@@ -48,7 +53,7 @@ public partial class CardModel(string card) : Container
                 Colour = Color4.Black,
                 Text = CardDeck.CardModelSymbol[card]
             },
-            new SpriteText // symbol in centre
+            centreSymbol = new SpriteText
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -56,7 +61,7 @@ public partial class CardModel(string card) : Container
                 Colour = Color4.Black,
                 Text = CardDeck.CardModelSymbol[card]
             },
-            new SpriteText // symbol in bottom right
+            bottomRightSymbol = new SpriteText
             {
                 Anchor = Anchor.BottomRight,
                 Origin = Anchor.Centre,
@@ -68,5 +73,27 @@ public partial class CardModel(string card) : Container
                 Rotation = -180,
             },
         ];
+        isCardFlipped.BindValueChanged(e =>
+        {
+            if (e.NewValue)
+            {
+                topLeftSymbol.Hide();
+                centreSymbol.Hide();
+                bottomRightSymbol.Hide();
+            }
+            else
+            {
+                topLeftSymbol.Show();
+                centreSymbol.Show();
+                bottomRightSymbol.Show();
+            }
+            // centreSymbol.Alpha = e.NewValue ? 0 : 1;
+            // bottomRightSymbol.Alpha = e.NewValue ? 0 : 1;
+        }, true);
+    }
+
+    public void ToggleCardFlipped()
+    {
+        isCardFlipped.Value = !isCardFlipped.Value;
     }
 }
