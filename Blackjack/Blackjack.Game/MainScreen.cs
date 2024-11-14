@@ -17,6 +17,8 @@ namespace Blackjack.Game
     {
         private CardHand cardHand;
         private Button drawCardButton;
+        private SpriteText score;
+        private Bindable<int> bindableScore = new(0);
 
         [BackgroundDependencyLoader]
         private void load()
@@ -32,10 +34,22 @@ namespace Blackjack.Game
                 Height = 100,
                 Y = -100
             };
+            score = new SpriteText
+            {
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
+                Y = 20,
+                Font = FontUsage.Default.With(size: 48),
+            };
+            bindableScore.BindValueChanged(e =>
+            {
+                score.Text = "Your hand: " + e.NewValue;
+            }, true);
             InternalChildren =
             [
                 drawCardButton,
-                cardHand
+                cardHand,
+                score
             ];
         }
 
@@ -55,7 +69,9 @@ namespace Blackjack.Game
                 return;
             }
 
-            cardHand.Add(new CardModel(drawCard()));
+            var cardDrawn = drawCard();
+            cardHand.Add(new CardModel(cardDrawn));
+            bindableScore.Value += CardDeck.CardValues[cardDrawn];
         }
 
         private static string drawCard()

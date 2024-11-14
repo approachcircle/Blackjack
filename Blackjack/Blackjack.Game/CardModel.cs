@@ -10,7 +10,7 @@ namespace Blackjack.Game;
 
 public partial class CardModel(string card) : Container
 {
-    public static Vector2 CardSize => new(200, 300);
+    public static Vector2 CardSize => new(160, 260);
     private static Vector2 cardSymbolPadding => new(30, 35);
 
     [BackgroundDependencyLoader]
@@ -31,8 +31,8 @@ public partial class CardModel(string card) : Container
             },
             new Box
             {
-                  Width = 180,
-                  Height = 280,
+                  Width = CardSize.X - 20,
+                  Height = CardSize.Y - 20,
                   Anchor = Anchor.BottomCentre,
                   Origin = Anchor.BottomCentre,
                   Y = -10,
