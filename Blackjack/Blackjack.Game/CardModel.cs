@@ -11,6 +11,8 @@ namespace Blackjack.Game;
 public partial class CardModel(string card) : Container
 {
     public static Vector2 CardSize => new(200, 300);
+    private static Vector2 cardSymbolPadding => new(30, 35);
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -40,8 +42,8 @@ public partial class CardModel(string card) : Container
             {
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.Centre,
-                X = 25,
-                Y = 30,
+                X = cardSymbolPadding.X,
+                Y = cardSymbolPadding.Y,
                 Font = FontUsage.Default.With(size: 40),
                 Colour = Color4.Black,
                 Text = CardDeck.CardModelSymbol[card]
@@ -61,8 +63,8 @@ public partial class CardModel(string card) : Container
                 Font = FontUsage.Default.With(size: 40),
                 Colour = Color4.Black,
                 Text = CardDeck.CardModelSymbol[card],
-                X = -25,
-                Y = -30,
+                X = -cardSymbolPadding.X,
+                Y = -cardSymbolPadding.Y,
                 Rotation = -180,
             },
         ];

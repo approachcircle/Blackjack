@@ -7,6 +7,8 @@ namespace Blackjack.Game;
 
 public partial class CardHand : FillFlowContainer
 {
+    private static float containerPadding => -20;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -16,5 +18,6 @@ public partial class CardHand : FillFlowContainer
         Origin = Anchor.BottomCentre;
         Spacing = new Vector2(10, 0);
         MaximumSize = new Vector2(CardModel.CardSize.X + 70, CardModel.CardSize.Y);
+        Y = containerPadding;
     }
 }
