@@ -6,7 +6,7 @@ namespace Blackjack.Game;
 public static class CardDeck
 {
     //TODO: need to add quantities to each card, and subtract them once added to a hand
-    public static Dictionary<string, int> Cards =>
+    public static Dictionary<string, int> CardValues =>
         new()
         {
             { "One", 1 },
@@ -25,7 +25,7 @@ public static class CardDeck
             { "Ace", 11 }
         };
 
-    private static Dictionary<string, string> cardModelSymbol;
+    private static Dictionary<string, string> cardModelSymbol; // luh calm bit of caching
 
     public static Dictionary<string, string> CardModelSymbol
     {
@@ -35,7 +35,7 @@ public static class CardDeck
             var symbols = new Dictionary<string, string>();
             for (int i = 0; i < 10; i++)
             {
-                symbols.Add(Cards.Keys.ElementAt(i), (i + 1).ToString());
+                symbols.Add(CardValues.Keys.ElementAt(i), (i + 1).ToString());
             }
             symbols.Add("King", "K");
             symbols.Add("Queen", "Q");
@@ -46,18 +46,20 @@ public static class CardDeck
         }
     }
 
-    // { "One", "1" },
-    // { "Two", "2" },
-    // { "Three", "3" },
-    // { "Four", "4" },
-    // { "Five", "5" },
-    // { "Six", "6" },
-    // { "Seven", "7" },
-    // { "Eight", "8" },
-    // { "Nine", "9" },
-    // { "Ten", "10" },
-    // { "King", "K" },
-    // { "Queen", "Q" },
-    // { "Jack", "J" },
-    // { "Ace", "A" }
+    private static Dictionary<string, int> cardQuantities;
+
+    public static Dictionary<string, int> CardQuantities
+    {
+        get
+        {
+            if (cardQuantities != null) return cardQuantities;
+            var quantities = new Dictionary<string, int>();
+            for (int i = 0; i < CardValues.Count; i++)
+            {
+                quantities.Add(CardValues.Keys.ElementAt(i), 4);
+            }
+            cardQuantities = quantities;
+            return cardQuantities;
+        }
+    }
 }
