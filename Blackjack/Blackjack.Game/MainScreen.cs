@@ -15,7 +15,7 @@ namespace Blackjack.Game
         private CardHand cardHand;
         private Button drawCardButton;
         private SpriteText score;
-        private Bindable<int> bindableScore = new(0);
+        private Bindable<int> bindableScore = new();
 
         [BackgroundDependencyLoader]
         private void load()
