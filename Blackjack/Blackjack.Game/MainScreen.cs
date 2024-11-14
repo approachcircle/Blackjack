@@ -73,6 +73,8 @@ namespace Blackjack.Game
 
         private void onCardDrawRequest(HandOwner handOwner, bool isCardFlipped = false)
         {
+            // TODO: not sure if this impl works correctly, plus the player wins by '5-Card charlie' if they have not
+            // TODO: busted with 5 cards in the deck, therefore that can be the limit
             bool deckEmpty = true;
             foreach (int quantity in CardDeck.CardQuantities.Values)
             {
