@@ -26,7 +26,7 @@ namespace Blackjack.Game
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Text = "Draw card",
-                Action = onCardDrawn,
+                Action = onCardDrawRequest,
                 Width = 200,
                 Height = 100,
                 Y = -100
@@ -50,7 +50,7 @@ namespace Blackjack.Game
             ];
         }
 
-        private void onCardDrawn()
+        private void onCardDrawRequest()
         {
             bool deckEmpty = true;
             foreach (int quantity in CardDeck.CardQuantities.Values)
