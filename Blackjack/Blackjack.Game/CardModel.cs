@@ -78,13 +78,13 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
             if (e.NewValue)
             {
                 topLeftSymbol.Hide();
-                centreSymbol.Hide();
+                centreSymbol.Text = "?";
                 bottomRightSymbol.Hide();
             }
             else
             {
                 topLeftSymbol.Show();
-                centreSymbol.Show();
+                centreSymbol.Text = CardDeck.CardModelSymbol[card];
                 bottomRightSymbol.Show();
             }
             // centreSymbol.Alpha = e.NewValue ? 0 : 1;
