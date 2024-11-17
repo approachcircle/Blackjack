@@ -5,9 +5,9 @@ using osu.Framework.Screens;
 namespace Blackjack.Game.Tests.Logic;
 
 [TestFixture]
-public partial class CardValueTest : BlackjackTestScene
+public sealed partial class CardValueTest : BlackjackTestScene
 {
-    private ScreenStack screenStack;
+    private readonly ScreenStack screenStack;
     private MainScreen mainScreen;
 
     public CardValueTest()
