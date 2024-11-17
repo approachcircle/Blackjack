@@ -5,9 +5,11 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
+using osuTK.Input;
 
 namespace Blackjack.Game
 {
@@ -137,6 +139,20 @@ namespace Blackjack.Game
             this.ScaleTo(0.8f, 200, Easing.InQuint);
             this.FadeOut(200, Easing.InQuint);
             return false;
+        }
+
+        protected override bool OnKeyDown(KeyDownEvent e)
+        {
+            if (!e.Repeat)
+            {
+                if (e.Key == Key.Escape)
+                {
+                    this.Exit();
+                    return true;
+                }
+            }
+
+            return base.OnKeyDown(e);
         }
     }
 }
