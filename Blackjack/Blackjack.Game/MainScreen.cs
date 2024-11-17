@@ -5,15 +5,11 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Input.Events;
-using osu.Framework.Screens;
-using osuTK;
 using osuTK.Graphics;
-using osuTK.Input;
 
 namespace Blackjack.Game
 {
-    public partial class MainScreen : Screen
+    public partial class MainScreen : BlackjackScreen
     {
         private CardHand playerHand;
         private CardHand dealerHand;
@@ -123,36 +119,6 @@ namespace Blackjack.Game
                 if (CardDeck.CardQuantities[drawnCard] <= 0) continue;
                 return drawnCard;
             }
-        }
-
-        // to see these animations on game start, we must be coming from another screen
-        // so main menu time maybe?
-        public override void OnEntering(ScreenTransitionEvent e)
-        {
-            this.Scale = new Vector2(0.8f, 0.8f);
-            this.ScaleTo(1f, 200, Easing.OutQuint);
-            this.FadeInFromZero(200, Easing.OutQuint);
-        }
-
-        public override bool OnExiting(ScreenExitEvent e)
-        {
-            this.ScaleTo(0.8f, 200, Easing.InQuint);
-            this.FadeOut(200, Easing.InQuint);
-            return false;
-        }
-
-        protected override bool OnKeyDown(KeyDownEvent e)
-        {
-            if (!e.Repeat)
-            {
-                if (e.Key == Key.Escape)
-                {
-                    this.Exit();
-                    return true;
-                }
-            }
-
-            return base.OnKeyDown(e);
         }
     }
 }

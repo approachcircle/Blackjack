@@ -1,5 +1,4 @@
-﻿using System;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Screens;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -8,7 +7,7 @@ using osuTK;
 
 namespace Blackjack.Game;
 
-public partial class MainMenuScreen : Screen
+public partial class MainMenuScreen : BlackjackScreen
 {
     private FillFlowContainer buttonContainer;
     [BackgroundDependencyLoader]
@@ -52,5 +51,12 @@ public partial class MainMenuScreen : Screen
                 Text = "Exit"
             }
         ]);
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        var result = base.OnExiting(e);
+        Game.Exit();
+        return result;
     }
 }
