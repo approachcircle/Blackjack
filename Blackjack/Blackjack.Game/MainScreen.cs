@@ -5,23 +5,28 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Screens;
 using osuTK.Graphics;
 
 namespace Blackjack.Game
 {
-    public partial class MainScreen : Screen
+    public partial class MainScreen : BlackjackScreen
     {
         private CardHand playerHand;
         private CardHand dealerHand;
         private Button hitButton;
         private Button standButton;
         private SpriteText score;
-        private Bindable<int> bindableScore = new();
+        private readonly Bindable<int> bindableScore = new();
+        public Bindable<int> BindableScore => bindableScore;
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            // mostly for use in the test browser, but just ensures that the card
+            // quantities are reset after each push of this screen
+            CardDeck.IsQuantitiesValid = false;
             playerHand = new CardHand(HandOwner.Player);
             dealerHand = new CardHand(HandOwner.Dealer);
             hitButton = new BasicButton
@@ -29,7 +34,7 @@ namespace Blackjack.Game
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Text = "Hit",
-                Action = () => onCardDrawRequest(HandOwner.Player),
+                Action = () => OnCardDrawRequest(HandOwner.Player),
                 Width = 200,
                 Height = 100,
                 // Y = -100,
@@ -65,13 +70,13 @@ namespace Blackjack.Game
                 score,
                 standButton
             ];
-            onCardDrawRequest(HandOwner.Player);
-            onCardDrawRequest(HandOwner.Player);
-            onCardDrawRequest(HandOwner.Dealer);
-            onCardDrawRequest(HandOwner.Dealer, true);
+            OnCardDrawRequest(HandOwner.Player);
+            OnCardDrawRequest(HandOwner.Player);
+            OnCardDrawRequest(HandOwner.Dealer);
+            OnCardDrawRequest(HandOwner.Dealer, true);
         }
 
-        private void onCardDrawRequest(HandOwner handOwner, bool isCardFlipped = false)
+        public void OnCardDrawRequest(HandOwner handOwner, bool isCardFlipped = false, string card = null)
         {
             // TODO: not sure if this impl works correctly, plus the player wins by '5-Card charlie' if they have not
             // TODO: busted with 5 cards in the deck, therefore that can be the limit
@@ -89,11 +94,21 @@ namespace Blackjack.Game
                 return;
             }
 
-            var cardDrawn = drawCard();
+            var cardDrawn = card ?? drawCard();
+            CardDeck.CardQuantities[cardDrawn]--;
             var cardModel = new CardModel(cardDrawn, handOwner);
             if (isCardFlipped) cardModel.ToggleCardFlipped();
             if (handOwner == HandOwner.Player) playerHand.Add(cardModel); else dealerHand.Add(cardModel);
-            if (handOwner == HandOwner.Player) bindableScore.Value += CardDeck.CardValues[cardDrawn];
+            if (handOwner != HandOwner.Player) return;
+            if (cardDrawn == "Ace")
+            {
+                if (bindableScore.Value + 11 > 21) bindableScore.Value++; // Ace low (1)
+                else bindableScore.Value += 11; // Ace high (11)
+            }
+            else
+            {
+                bindableScore.Value += CardDeck.CardValues[cardDrawn];
+            }
         }
 
         private static string drawCard()
@@ -102,7 +117,6 @@ namespace Blackjack.Game
             {
                 string drawnCard = CardDeck.CardValues.Keys.ElementAt(new Random().Next(0, CardDeck.CardValues.Keys.Count));
                 if (CardDeck.CardQuantities[drawnCard] <= 0) continue;
-                CardDeck.CardQuantities[drawnCard]--;
                 return drawnCard;
             }
         }

@@ -20,7 +20,7 @@ namespace Blackjack.Game
         {
             base.LoadComplete();
 
-            screenStack.Push(new MainScreen());
+            screenStack.Push(new MainMenuScreen());
         }
     }
 }

@@ -96,4 +96,9 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
     {
         isCardFlipped.Value = !isCardFlipped.Value;
     }
+
+    public int GetCardValue()
+    {
+        return 0;
+    }
 }
