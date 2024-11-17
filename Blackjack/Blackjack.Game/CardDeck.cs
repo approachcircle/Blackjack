@@ -45,18 +45,20 @@ public static class CardDeck
     }
 
     private static Dictionary<string, int> cardQuantities;
+    public static bool IsQuantitiesValid { get; set; }
 
     public static Dictionary<string, int> CardQuantities
     {
         get
         {
-            if (cardQuantities != null) return cardQuantities;
+            if (IsQuantitiesValid && cardQuantities != null) return cardQuantities;
             var quantities = new Dictionary<string, int>();
             for (int i = 0; i < CardValues.Count; i++)
             {
                 quantities.Add(CardValues.Keys.ElementAt(i), 4);
             }
             cardQuantities = quantities;
+            IsQuantitiesValid = true;
             return cardQuantities;
         }
     }
