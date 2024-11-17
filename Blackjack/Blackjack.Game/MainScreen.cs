@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
+using osuTK;
 using osuTK.Graphics;
 
 namespace Blackjack.Game
@@ -23,6 +24,11 @@ namespace Blackjack.Game
         [BackgroundDependencyLoader]
         private void load()
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            // mostly for use in the test browser, but just ensures that the card
+            // quantities are reset after each push of this screen
+            CardDeck.IsQuantitiesValid = false;
             playerHand = new CardHand(HandOwner.Player);
             dealerHand = new CardHand(HandOwner.Dealer);
             hitButton = new BasicButton
@@ -115,6 +121,22 @@ namespace Blackjack.Game
                 if (CardDeck.CardQuantities[drawnCard] <= 0) continue;
                 return drawnCard;
             }
+        }
+
+        // to see these animations on game start, we must be coming from another screen
+        // so main menu time maybe?
+        public override void OnEntering(ScreenTransitionEvent e)
+        {
+            this.Scale = new Vector2(0.8f, 0.8f);
+            this.ScaleTo(1f, 200, Easing.OutQuint);
+            this.FadeInFromZero(200, Easing.OutQuint);
+        }
+
+        public override bool OnExiting(ScreenExitEvent e)
+        {
+            this.ScaleTo(0.8f, 200, Easing.InQuint);
+            this.FadeOut(200, Easing.InQuint);
+            return false;
         }
     }
 }
