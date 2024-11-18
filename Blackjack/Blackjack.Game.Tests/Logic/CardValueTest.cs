@@ -35,16 +35,15 @@ public sealed partial class CardValueTest : BlackjackTestScene
     [Test]
     public void TestHighAceBehaviour()
     {
-        AddStep("add low cards", () =>
+        AddStep("add low card", () =>
         {
-            cardHand.DrawCard("Two");
-            cardHand.DrawCard("Two");
+            cardHand.DrawCard("King");
         });
         AddStep("add ace to player hand", () =>
         {
             cardHand.DrawCard("Ace");
         });
-        AddAssert("ensure hand equals prediction", () => cardHand.HandScore.Value == 15);
+        AddAssert("ensure hand equals prediction", () => cardHand.HandScore.Value == 21);
     }
 
     [Test]
@@ -52,8 +51,8 @@ public sealed partial class CardValueTest : BlackjackTestScene
     {
         AddStep("add high cards", () =>
         {
-            cardHand.DrawCard("Ten");
-            cardHand.DrawCard("Ten");
+            cardHand.DrawCard("King");
+            cardHand.DrawCard("King");
         });
         AddStep("add ace to player hand", () =>
         {
