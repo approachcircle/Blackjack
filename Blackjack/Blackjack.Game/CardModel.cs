@@ -1,4 +1,5 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -87,18 +88,22 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
                 centreSymbol.Text = CardDeck.CardModelSymbol[card];
                 bottomRightSymbol.Show();
             }
-            // centreSymbol.Alpha = e.NewValue ? 0 : 1;
-            // bottomRightSymbol.Alpha = e.NewValue ? 0 : 1;
         }, true);
+    }
+
+    public void ToggleAnimatedCardFlipped(Action onFlipped)
+    {
+        // if we fade out completely, the fill flow container thinks the card isn't there anymore,
+        // so tries to readjust the other cards, causing it to jump around for a few frames
+        this.FadeTo(0.01f, 250, Easing.OutQuint).ScaleTo(new Vector2(0.01f, 1), 250, Easing.OutQuint).Finally((_) =>
+        {
+            ToggleCardFlipped();
+            this.FadeIn(250, Easing.InQuint).ScaleTo(Vector2.One, 250, Easing.InQuint).Finally(_ => onFlipped?.Invoke());
+        });
     }
 
     public void ToggleCardFlipped()
     {
         isCardFlipped.Value = !isCardFlipped.Value;
-    }
-
-    public int GetCardValue()
-    {
-        return 0;
     }
 }
