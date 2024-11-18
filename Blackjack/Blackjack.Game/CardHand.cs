@@ -27,7 +27,7 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         }
     }
 
-    public Bindable<HandState> HandState { get; } = new();
+    public Bindable<HandState> HandState { get; } = new(handOwner == HandOwner.Player ? Game.HandState.Active : Game.HandState.NotReady);
     private CardModel flippedCard;
 
     [BackgroundDependencyLoader]
@@ -61,6 +61,7 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         {
             flippedCard = cardModel;
             flippedCard.ToggleCardFlipped();
+            HandState.Value = Game.HandState.Active;
         }
         Add(cardModel);
         if (activeCard == "Ace")
@@ -97,6 +98,6 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
             throw new InvalidOperationException(
                 "cannot reveal a card on a player's hand, this may only be performed on the dealer.");
         }
-        flippedCard?.ToggleAnimatedCardFlipped(OnCardFlipped);
+        flippedCard.ToggleAnimatedCardFlipped(OnCardFlipped);
     }
 }

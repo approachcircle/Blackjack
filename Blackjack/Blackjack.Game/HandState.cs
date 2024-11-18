@@ -2,10 +2,11 @@
 
 public enum HandState
 {
+    NotReady,
     Active,
     Standing,
     Pushed,
-    Won,
+    TwentyOne,
     Blackjack,
     Bust
 }

@@ -1,5 +1,5 @@
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
+using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -18,7 +18,6 @@ namespace Blackjack.Game
         private SpriteText dealerScore;
         private FillFlowContainer scoresContainer;
         private SpriteText handState;
-        private readonly Bindable<int> bindableScore = new();
 
         [BackgroundDependencyLoader]
         private void load()
@@ -95,32 +94,18 @@ namespace Blackjack.Game
             playerHand.HandState.BindValueChanged(e =>
             {
                 handState.Text = "Hand state: " + e.NewValue;
-                if (e.NewValue == HandState.Active) return;
-                GameEndOverlay overlay = null;
-                int displayDuration = 800;
-                if (e.NewValue == HandState.Standing)
-                {
-                    overlay = new GameEndOverlay(Colour4.Blue, "Standing");
-                    displayDuration = 400;
-                } else if (e.NewValue == HandState.Bust)
-                {
-                    overlay = new GameEndOverlay(Colour4.Red, "Bust");
-                } else if (e.NewValue is HandState.Blackjack or HandState.Won)
-                {
-                    overlay = new GameEndOverlay(Colour4.Green, "You win");
-                }
+                if (e.NewValue is HandState.Active or HandState.NotReady) return;
+                GameEndOverlay overlay = new GameEndOverlay(e.NewValue);
                 hitButton.Enabled.Value = false;
                 standButton.Enabled.Value = false;
-                dealerHand.RevealCard();
-                if (overlay is not null)
+                dealerHand.HandState.BindValueChanged(dealerEvent =>
                 {
-                    AddInternal(overlay);
-                    overlay.Show();
-                    Scheduler.AddDelayed(() =>
-                    {
-                        overlay.Hide();
-                    }, displayDuration);
-                }
+                    // only reveal card if it is present and the dealer is ready
+                    if (dealerEvent.NewValue == HandState.NotReady) return;
+                    dealerHand.RevealCard();
+                }, true);
+                AddInternal(overlay);
+                overlay.Show();
             }, true);
             InternalChildren =
             [
