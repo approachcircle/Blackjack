@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Blackjack.Game.Tests.Visual
 {
     [TestFixture]
-    public partial class TestSceneMainScreen : BlackjackTestScene
+    public sealed partial class TestSceneMainScreen : BlackjackTestScene
     {
         public TestSceneMainScreen()
         {

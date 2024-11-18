@@ -7,8 +7,8 @@ namespace Blackjack.Game.Tests.Visual;
 [TestFixture]
 public sealed partial class BlackjackButtonTest : BlackjackTestScene
 {
-    private BlackjackButton button;
-    private SpriteText text;
+    private readonly BlackjackButton button;
+    private readonly SpriteText text;
 
     public BlackjackButtonTest()
     {
