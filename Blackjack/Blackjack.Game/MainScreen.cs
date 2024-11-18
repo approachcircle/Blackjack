@@ -95,10 +95,31 @@ namespace Blackjack.Game
             playerHand.HandState.BindValueChanged(e =>
             {
                 handState.Text = "Hand state: " + e.NewValue;
+                if (e.NewValue == HandState.Active) return;
+                GameEndOverlay overlay = null;
+                int displayDuration = 800;
                 if (e.NewValue == HandState.Standing)
                 {
-                    hitButton.Enabled.Value = false;
-                    dealerHand.RevealCard();
+                    overlay = new GameEndOverlay(Colour4.Blue, "Standing");
+                    displayDuration = 400;
+                } else if (e.NewValue == HandState.Bust)
+                {
+                    overlay = new GameEndOverlay(Colour4.Red, "Bust");
+                } else if (e.NewValue is HandState.Blackjack or HandState.Won)
+                {
+                    overlay = new GameEndOverlay(Colour4.Green, "You win");
+                }
+                hitButton.Enabled.Value = false;
+                standButton.Enabled.Value = false;
+                dealerHand.RevealCard();
+                if (overlay is not null)
+                {
+                    AddInternal(overlay);
+                    overlay.Show();
+                    Scheduler.AddDelayed(() =>
+                    {
+                        overlay.Hide();
+                    }, displayDuration);
                 }
             }, true);
             InternalChildren =

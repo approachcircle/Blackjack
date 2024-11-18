@@ -97,6 +97,6 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
             throw new InvalidOperationException(
                 "cannot reveal a card on a player's hand, this may only be performed on the dealer.");
         }
-        flippedCard.ToggleAnimatedCardFlipped(OnCardFlipped);
+        flippedCard?.ToggleAnimatedCardFlipped(OnCardFlipped);
     }
 }

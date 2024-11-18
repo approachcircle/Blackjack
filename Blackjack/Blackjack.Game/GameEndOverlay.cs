@@ -29,13 +29,13 @@ public partial class GameEndOverlay(Colour4 overlayColour, string overlayText = 
             RelativeSizeAxes = Axes.X,
             Scale = new Vector2(1.0f, 75),
             Colour = overlayColour,
-            Alpha = 0.2f,
+            Alpha = 0.9f,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre
         });
         Add(new SpriteText
         {
-            Colour = overlayColour,
+            Colour = Colour4.White,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Text = overlayText,
