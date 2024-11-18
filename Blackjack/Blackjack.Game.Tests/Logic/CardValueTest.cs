@@ -12,10 +12,6 @@ public sealed partial class CardValueTest : BlackjackTestScene
     private CardHand cardHand;
     private SpriteText handScore;
 
-    public CardValueTest()
-    {
-    }
-
     [SetUp]
     public void Setup()
     {
