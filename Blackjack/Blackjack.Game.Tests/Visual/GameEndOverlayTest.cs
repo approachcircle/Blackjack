@@ -1,36 +1,69 @@
 using NUnit.Framework;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
-using osuTK.Graphics;
 
 namespace Blackjack.Game.Tests.Visual;
 
 [TestFixture]
 public sealed partial class GameEndOverlayTest : BlackjackTestScene
 {
-    private readonly GameEndOverlay overlayContainer;
+    private GameEndOverlay overlayContainer;
 
-    public GameEndOverlayTest()
+    [SetUp]
+    public void SetUp()
     {
-        overlayContainer = new GameEndOverlay(Colour4.BlueViolet, "test overlay");
-        Add(overlayContainer);
+        overlayContainer?.Expire();
     }
 
     [Test]
-    public void BasicPopoverTest()
+    public void BustOverlayTest()
+    {
+        AddStep("add bust overlay", () =>
+        {
+            overlayContainer = new GameEndOverlay(HandState.Bust);
+            Add(overlayContainer);
+        });
+        showAndCheckOverlay();
+    }
+
+    [Test]
+    public void StandOverlayTest()
+    {
+        AddStep("add stand overlay", () =>
+        {
+            overlayContainer = new GameEndOverlay(HandState.Standing);
+            Add(overlayContainer);
+        });
+        showAndCheckOverlay();
+    }
+
+    [Test]
+    public void PushOverlayTest()
+    {
+        AddStep("add push overlay", () =>
+        {
+            overlayContainer = new GameEndOverlay(HandState.Pushed);
+            Add(overlayContainer);
+        });
+        showAndCheckOverlay();
+    }
+
+    [Test]
+    public void WinOverlayTest()
+    {
+        AddStep("add win overlay", () =>
+        {
+            overlayContainer = new GameEndOverlay(HandState.TwentyOne);
+            Add(overlayContainer);
+        });
+        showAndCheckOverlay();
+    }
+
+    private void showAndCheckOverlay()
     {
         AddStep("show overlay", () =>
         {
             overlayContainer.Show();
         });
         AddUntilStep("ensure overlay is present", () => overlayContainer.IsPresent);
-        AddWaitStep("let it soak", 10);
-        AddStep("hide overlay", () =>
-        {
-            overlayContainer.Hide();
-        });
-        AddUntilStep("ensure overlay is hidden", () => !overlayContainer.IsPresent);
+        AddUntilStep("ensure overlay is now hidden", () => !overlayContainer.IsPresent);
     }
 }
