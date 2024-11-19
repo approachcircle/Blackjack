@@ -24,14 +24,14 @@ public partial class BlackjackScreen : Screen
         return false;
     }
 
-    // public override void OnSuspending(ScreenTransitionEvent e)
-    // {
-    //     this.ScaleTo(0.8f, 200, Easing.OutQuint).FadeOut(200, Easing.OutQuint);
-    // }
+    public override void OnSuspending(ScreenTransitionEvent e)
+    {
+        // prevent ghosting of this screen behind others as they're entering
+        Alpha = 0f;
+    }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        Alpha = 0f;
         Scale = new Vector2(shrink_size, shrink_size);
         this
             .Delay(animation_time)
