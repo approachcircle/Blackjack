@@ -30,10 +30,6 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
         string overlayText;
         switch (handState)
         {
-            case HandState.Standing:
-                overlayColour = Colour4.Blue;
-                overlayText = "Standing";
-                break;
             case HandState.Bust:
                 overlayColour = Colour4.Red;
                 overlayText = "Bust";
@@ -67,11 +63,11 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
                 overlayText = "FIVE CARD CHARLIE";
                 break;
             case HandState.Pushed:
-                overlayColour = Colour4.BlueViolet;
+                overlayColour = Colour4.Blue;
                 overlayText = "Push";
                 break;
             default:
-                throw new InvalidEnumArgumentException("missing overlay layouts for the enum value: " + handState);
+                throw new InvalidEnumArgumentException("missing overlay layout for enum value: " + handState);
         }
         Masking = true;
         GlowRadius.BindValueChanged((e) =>
