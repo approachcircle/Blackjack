@@ -25,7 +25,7 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     private void load(ITrackStore tracks)
     {
         bustSample = tracks.Get("text_splash_fx.mp3");
-        bustSample.Volume.Value = 0.25f;
+        bustSample.Volume.Value = 0.1f;
         Colour4 overlayColour;
         string overlayText;
         switch (handState)
