@@ -91,19 +91,24 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
         }, true);
     }
 
-    public void ToggleAnimatedCardFlipped(Action onFlipped)
+    public void RevealCardAnimated(Action onFlipped)
     {
         // if we fade out completely, the fill flow container thinks the card isn't there anymore,
         // so tries to readjust the other cards, causing it to jump around for a few frames
         this.FadeTo(0.01f, 250, Easing.OutQuint).ScaleTo(new Vector2(0.01f, 1), 250, Easing.OutQuint).Finally((_) =>
         {
-            ToggleCardFlipped();
+            RevealCard();
             this.FadeIn(250, Easing.InQuint).ScaleTo(Vector2.One, 250, Easing.InQuint).Finally(_ => onFlipped?.Invoke());
         });
     }
 
-    public void ToggleCardFlipped()
+    public void RevealCard()
     {
-        isCardFlipped.Value = !isCardFlipped.Value;
+        isCardFlipped.Value = false;
+    }
+
+    public void FlipCard()
+    {
+        isCardFlipped.Value = true;
     }
 }

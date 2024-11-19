@@ -27,8 +27,11 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         }
     }
 
+    public Action OnCardDrawn { get; set; }
+
     public Bindable<HandState> HandState { get; } = new(handOwner == HandOwner.Player ? Game.HandState.Active : Game.HandState.NotReady);
     private CardModel flippedCard;
+    public int CardCount { get; private set; } = 0;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -40,6 +43,7 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         Spacing = new Vector2(10, 0);
         MaximumSize = new Vector2(CardModel.CardSize.X + 70, CardModel.CardSize.Y);
         Y = handOwner == HandOwner.Player ? containerPadding : -containerPadding;
+
     }
 
     public void DrawCard(string card = null, bool flipped = false)
@@ -60,7 +64,7 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         if (flipped)
         {
             flippedCard = cardModel;
-            flippedCard.ToggleCardFlipped();
+            flippedCard.FlipCard();
             HandState.Value = Game.HandState.Active;
         }
         Add(cardModel);
@@ -73,22 +77,23 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         {
             HandScore.Value += CardDeck.CardValues[activeCard];
         }
-
         CardDeck.CardQuantities[activeCard]--;
-        if (HandScore.Value == 21)
-        {
-            HandState.Value = Game.HandState.Blackjack;
-            return;
-        }
-        if (HandScore.Value > 21)
-        {
-            HandState.Value = Game.HandState.Bust;
-            return;
-        }
-        if (HandScore.Value == 17 && handOwner == HandOwner.Dealer)
-        {
-            HandState.Value = Game.HandState.Standing;
-        }
+        CardCount++;
+        OnCardDrawn?.Invoke();
+        // if (HandScore.Value == 21)
+        // {
+        //     HandState.Value = Game.HandState.Blackjack;
+        //     return;
+        // }
+        // if (HandScore.Value > 21)
+        // {
+        //     HandState.Value = Game.HandState.Bust;
+        //     return;
+        // }
+        // if (HandScore.Value == 17 && handOwner == HandOwner.Dealer)
+        // {
+        //     HandState.Value = Game.HandState.Standing;
+        // }
     }
 
     public void RevealCard()
@@ -98,6 +103,6 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
             throw new InvalidOperationException(
                 "cannot reveal a card on a player's hand, this may only be performed on the dealer.");
         }
-        flippedCard.ToggleAnimatedCardFlipped(OnCardFlipped);
+        flippedCard.RevealCardAnimated(OnCardFlipped);
     }
 }

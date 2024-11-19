@@ -13,10 +13,11 @@ namespace Blackjack.Game
         private CardHand dealerHand;
         private BasicButton hitButton;
         private BasicButton standButton;
+        private BasicButton rematchButton;
         private SpriteText playerScore;
         private SpriteText dealerScore;
         private FillFlowContainer scoresContainer;
-        private SpriteText handState;
+        private GameEndOverlay currentGameEndOverlay;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -44,11 +45,30 @@ namespace Blackjack.Game
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Text = "Stand",
-                Action = () => playerHand.HandState.Value = HandState.Standing,
+                Action = () =>
+                {
+                    playerHand.HandState.Value = HandState.Standing;
+                    GameWatcher.Update(playerHand, dealerHand);
+                },
                 Width = 200,
                 Height = 100,
                 // Y = -100,
                 X = -20
+            };
+            // TODO: make this button flash to make it more obvious.
+            // TODO: first needs to be turned into a 'BlackjackButton'
+            // TODO: then specialised into a specific flashing button
+            rematchButton = new BasicButton
+            {
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Text = "Rematch",
+                Action = load,
+                Width = 200,
+                Height = 100,
+                Y = -100,
+                X = -20,
+                Alpha = 0f
             };
             scoresContainer = new FillFlowContainer()
             {
@@ -84,17 +104,11 @@ namespace Blackjack.Game
             };
             scoresContainer.Add(dealerScore);
             scoresContainer.Add(playerScore);
-            handState = new SpriteText
-            {
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopRight,
-                Font = FontUsage.Default.With(size: 20)
-            };
             playerHand.HandState.BindValueChanged(e =>
             {
-                handState.Text = "Hand state: " + e.NewValue;
-                if (e.NewValue is HandState.Active or HandState.NotReady) return;
-                GameEndOverlay overlay = new GameEndOverlay(e.NewValue);
+                if (e.NewValue is HandState.Active or HandState.NotReady or HandState.Standing) return;
+                currentGameEndOverlay?.Expire();
+                currentGameEndOverlay = new GameEndOverlay(e.NewValue);
                 hitButton.Enabled.Value = false;
                 standButton.Enabled.Value = false;
                 dealerHand.HandState.BindValueChanged(dealerEvent =>
@@ -103,9 +117,12 @@ namespace Blackjack.Game
                     if (dealerEvent.NewValue == HandState.NotReady) return;
                     dealerHand.RevealCard();
                 }, true);
-                AddInternal(overlay);
-                overlay.Show();
+                AddInternal(currentGameEndOverlay);
+                currentGameEndOverlay.Show();
+                rematchButton.Alpha = 1.0f;
             }, true);
+            dealerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
+            playerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
             InternalChildren =
             [
                 hitButton,
@@ -113,7 +130,7 @@ namespace Blackjack.Game
                 dealerHand,
                 scoresContainer,
                 standButton,
-                handState
+                rematchButton
             ];
             playerHand.DrawCard();
             playerHand.DrawCard();

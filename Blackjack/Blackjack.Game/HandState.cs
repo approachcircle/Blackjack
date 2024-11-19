@@ -8,5 +8,10 @@ public enum HandState
     Pushed,
     TwentyOne,
     Blackjack,
-    Bust
+    Bust,
+    BeatDealer,
+    BeatByDealer,
+    DealerBust,
+    PlayerFiveCardCharlie,
+    DealerFiveCardCharlie
 }

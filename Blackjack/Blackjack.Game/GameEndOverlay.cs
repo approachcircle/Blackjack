@@ -17,7 +17,7 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     public Bindable<float> GlowRadius { get; set; } = new(0.0f);
     private bool startGlowIncrease = false;
     private const int enter_exit_duration = 400;
-    private const int stay_alive_duration = 800;
+    private const int stay_alive_duration = 1200;
     public HandState HandStateReflected => handState;
     private Track bustSample;
 
@@ -25,7 +25,7 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     private void load(ITrackStore tracks)
     {
         bustSample = tracks.Get("text_splash_fx.mp3");
-        bustSample.Volume.Value = 0.5f;
+        bustSample.Volume.Value = 0.25f;
         Colour4 overlayColour;
         string overlayText;
         switch (handState)
@@ -38,10 +38,33 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
                 overlayColour = Colour4.Red;
                 overlayText = "Bust";
                 break;
+            case HandState.BeatByDealer:
+                overlayColour = Colour4.Red;
+                overlayText = "Beat by dealer";
+                break;
             case HandState.Blackjack:
+                overlayColour = Colour4.Green;
+                overlayText = "BLACKJACK";
+                break;
+            case HandState.BeatDealer:
+                overlayColour = Colour4.Green;
+                overlayText = "Beat dealer";
+                break;
+            case HandState.DealerBust:
+                overlayColour = Colour4.Green;
+                overlayText = "Dealer bust";
+                break;
             case HandState.TwentyOne:
                 overlayColour = Colour4.Green;
-                overlayText = "Twenty One";
+                overlayText = "Twenty one";
+                break;
+            case HandState.PlayerFiveCardCharlie:
+                overlayColour = Colour4.Green;
+                overlayText = "FIVE CARD CHARLIE";
+                break;
+            case HandState.DealerFiveCardCharlie:
+                overlayColour = Colour4.Red;
+                overlayText = "FIVE CARD CHARLIE";
                 break;
             case HandState.Pushed:
                 overlayColour = Colour4.BlueViolet;
@@ -101,11 +124,6 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
             {
                 Scheduler.Add(Hide);
             };
-        }
-        // game ending states (without accompanying audio)
-        else if (HandStateReflected is HandState.TwentyOne or HandState.Blackjack or HandState.Pushed)
-        {
-            Scheduler.AddDelayed(Hide, stay_alive_duration * 1.5f);
         }
         // every other overlay
         else
