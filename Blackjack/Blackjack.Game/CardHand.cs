@@ -80,20 +80,6 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         CardDeck.CardQuantities[activeCard]--;
         CardCount++;
         OnCardDrawn?.Invoke();
-        // if (HandScore.Value == 21)
-        // {
-        //     HandState.Value = Game.HandState.Blackjack;
-        //     return;
-        // }
-        // if (HandScore.Value > 21)
-        // {
-        //     HandState.Value = Game.HandState.Bust;
-        //     return;
-        // }
-        // if (HandScore.Value == 17 && handOwner == HandOwner.Dealer)
-        // {
-        //     HandState.Value = Game.HandState.Standing;
-        // }
     }
 
     public void RevealCard()
