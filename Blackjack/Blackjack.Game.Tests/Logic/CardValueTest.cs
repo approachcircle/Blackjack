@@ -1,38 +1,62 @@
 ﻿using Blackjack.Game.Tests.Visual;
 using NUnit.Framework;
-using osu.Framework.Screens;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics;
 
 namespace Blackjack.Game.Tests.Logic;
 
 [TestFixture]
 public sealed partial class CardValueTest : BlackjackTestScene
 {
-    private readonly ScreenStack screenStack;
-    private MainScreen mainScreen;
+    private CardHand cardHand;
+    private SpriteText handScore;
 
-    public CardValueTest()
+    [SetUp]
+    public void Setup()
     {
-        screenStack = new ScreenStack();
-        Add(screenStack);
+        cardHand?.Expire();
+        cardHand = new CardHand(HandOwner.Player);
+        Add(cardHand);
+        handScore?.Expire();
+        handScore = new SpriteText
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Font = FontUsage.Default.With(size: 40),
+        };
+        cardHand.HandScore.BindValueChanged((e) =>
+        {
+            handScore.Text = "Hand score: " + e.NewValue;
+        }, true);
+        Add(handScore);
     }
 
     [Test]
-    public void TestLowAceDoesNotCauseBust()
+    public void TestHighAceBehaviour()
     {
-        AddStep("exit screen if one is present", () =>
+        AddStep("add low card", () =>
         {
-            if (screenStack.CurrentScreen is not null) screenStack.Exit();
+            cardHand.DrawCard("King");
         });
-        AddStep("push new screen", () =>
-        {
-            screenStack.Push(mainScreen = new MainScreen());
-        });
-        AddUntilStep("wait for screen to load", () => mainScreen.IsLoaded);
-        AddAssert("ensure player is not bust", () => mainScreen.BindableScore.Value < 22);
         AddStep("add ace to player hand", () =>
         {
-            mainScreen.OnCardDrawRequest(HandOwner.Player, card: "Ace");
+            cardHand.DrawCard("Ace");
         });
-        AddAssert("ensure player is not bust", () => mainScreen.BindableScore.Value < 22);
+        AddAssert("ensure hand equals prediction", () => cardHand.HandScore.Value == 21);
+    }
+
+    [Test]
+    public void TestLowAceBehaviour()
+    {
+        AddStep("add high cards", () =>
+        {
+            cardHand.DrawCard("King");
+            cardHand.DrawCard("King");
+        });
+        AddStep("add ace to player hand", () =>
+        {
+            cardHand.DrawCard("Ace");
+        });
+        AddAssert("ensure hand equals prediction", () => cardHand.HandScore.Value == 21);
     }
 }

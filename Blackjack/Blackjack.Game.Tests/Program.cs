@@ -7,9 +7,9 @@ namespace Blackjack.Game.Tests
     {
         public static void Main()
         {
-            using (GameHost host = Host.GetSuitableDesktopHost("visual-tests"))
-            using (var game = new BlackjackTestBrowser())
-                host.Run(game);
+            using GameHost host = Host.GetSuitableDesktopHost("visual-tests");
+            using var game = new BlackjackTestBrowser();
+            host.Run(game);
         }
     }
 }

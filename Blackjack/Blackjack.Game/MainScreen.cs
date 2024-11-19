@@ -1,11 +1,9 @@
-using System;
-using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK.Graphics;
+using osuTK;
 
 namespace Blackjack.Game
 {
@@ -13,11 +11,13 @@ namespace Blackjack.Game
     {
         private CardHand playerHand;
         private CardHand dealerHand;
-        private Button hitButton;
-        private Button standButton;
-        private SpriteText score;
-        private readonly Bindable<int> bindableScore = new();
-        public Bindable<int> BindableScore => bindableScore;
+        private BasicButton hitButton;
+        private BasicButton standButton;
+        private BasicButton rematchButton;
+        private SpriteText playerScore;
+        private SpriteText dealerScore;
+        private FillFlowContainer scoresContainer;
+        private GameEndOverlay currentGameEndOverlay;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -34,7 +34,7 @@ namespace Blackjack.Game
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Text = "Hit",
-                Action = () => OnCardDrawRequest(HandOwner.Player),
+                Action = () => playerHand.DrawCard(),
                 Width = 200,
                 Height = 100,
                 // Y = -100,
@@ -45,80 +45,97 @@ namespace Blackjack.Game
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Text = "Stand",
-                // Action = onCardDrawRequest,
+                Action = () =>
+                {
+                    playerHand.HandState.Value = HandState.Standing;
+                    GameWatcher.Update(playerHand, dealerHand);
+                },
                 Width = 200,
                 Height = 100,
                 // Y = -100,
                 X = -20
             };
-            score = new SpriteText
+            // TODO: make this button flash to make it more obvious.
+            // TODO: first needs to be turned into a 'BlackjackButton'
+            // TODO: then specialised into a specific flashing button
+            rematchButton = new BasicButton
+            {
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Text = "Rematch",
+                Action = load,
+                Width = 200,
+                Height = 100,
+                Y = -100,
+                X = -20,
+                Alpha = 0f
+            };
+            scoresContainer = new FillFlowContainer()
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                // Y = 20,
+                Spacing = new Vector2(0, 20),
+                Direction = FillDirection.Vertical
+            };
+            playerScore = new SpriteText
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Y = 10,
                 Font = FontUsage.Default.With(size: 48),
             };
-            bindableScore.BindValueChanged(e =>
+            playerHand.HandScore.BindValueChanged(e =>
             {
-                score.Text = "Your hand: " + e.NewValue;
+                playerScore.Text = "Your hand: " + e.NewValue;
             }, true);
+            dealerScore = new SpriteText()
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Y = -10,
+                Font = FontUsage.Default.With(size: 48),
+            };
+            dealerHand.OnCardFlipped = () =>
+            {
+                dealerHand.HandScore.BindValueChanged((e) =>
+                {
+                    dealerScore.Text = "Dealer's hand: " + e.NewValue;
+                }, true);
+            };
+            scoresContainer.Add(dealerScore);
+            scoresContainer.Add(playerScore);
+            playerHand.HandState.BindValueChanged(e =>
+            {
+                if (e.NewValue is HandState.Active or HandState.NotReady or HandState.Standing) return;
+                currentGameEndOverlay?.Expire();
+                currentGameEndOverlay = new GameEndOverlay(e.NewValue);
+                hitButton.Enabled.Value = false;
+                standButton.Enabled.Value = false;
+                dealerHand.HandState.BindValueChanged(dealerEvent =>
+                {
+                    // only reveal card if it is present and the dealer is ready
+                    if (dealerEvent.NewValue == HandState.NotReady) return;
+                    dealerHand.RevealCard();
+                }, true);
+                AddInternal(currentGameEndOverlay);
+                currentGameEndOverlay.Show();
+                rematchButton.Alpha = 1.0f;
+            }, true);
+            dealerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
+            playerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
             InternalChildren =
             [
                 hitButton,
                 playerHand,
                 dealerHand,
-                score,
-                standButton
+                scoresContainer,
+                standButton,
+                rematchButton
             ];
-            OnCardDrawRequest(HandOwner.Player);
-            OnCardDrawRequest(HandOwner.Player);
-            OnCardDrawRequest(HandOwner.Dealer);
-            OnCardDrawRequest(HandOwner.Dealer, true);
-        }
-
-        public void OnCardDrawRequest(HandOwner handOwner, bool isCardFlipped = false, string card = null)
-        {
-            // TODO: not sure if this impl works correctly, plus the player wins by '5-Card charlie' if they have not
-            // TODO: busted with 5 cards in the deck, therefore that can be the limit
-            bool deckEmpty = true;
-            foreach (int quantity in CardDeck.CardQuantities.Values)
-            {
-                if (quantity > 0) deckEmpty = false; break;
-            }
-            if (deckEmpty)
-            {
-                hitButton
-                    .FadeColour(Color4.DarkRed)
-                    .Delay(250)
-                    .FadeColour(Color4.Gray, 250);
-                return;
-            }
-
-            var cardDrawn = card ?? drawCard();
-            CardDeck.CardQuantities[cardDrawn]--;
-            var cardModel = new CardModel(cardDrawn, handOwner);
-            if (isCardFlipped) cardModel.ToggleCardFlipped();
-            if (handOwner == HandOwner.Player) playerHand.Add(cardModel); else dealerHand.Add(cardModel);
-            if (handOwner != HandOwner.Player) return;
-            if (cardDrawn == "Ace")
-            {
-                if (bindableScore.Value + 11 > 21) bindableScore.Value++; // Ace low (1)
-                else bindableScore.Value += 11; // Ace high (11)
-            }
-            else
-            {
-                bindableScore.Value += CardDeck.CardValues[cardDrawn];
-            }
-        }
-
-        private static string drawCard()
-        {
-            for (;;)
-            {
-                string drawnCard = CardDeck.CardValues.Keys.ElementAt(new Random().Next(0, CardDeck.CardValues.Keys.Count));
-                if (CardDeck.CardQuantities[drawnCard] <= 0) continue;
-                return drawnCard;
-            }
+            playerHand.DrawCard();
+            playerHand.DrawCard();
+            dealerHand.DrawCard();
+            dealerHand.DrawCard(flipped: true);
         }
     }
 }
