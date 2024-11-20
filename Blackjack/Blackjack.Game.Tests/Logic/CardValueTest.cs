@@ -59,4 +59,21 @@ public sealed partial class CardValueTest : BlackjackTestScene
         });
         AddAssert("ensure hand equals prediction", () => cardHand.HandScore.Value == 21);
     }
+
+    [Test]
+    public void TestDynamicAceBehaviour()
+    {
+        CardHand dealerHand = new CardHand(HandOwner.Dealer);
+        dealerHand.DrawCard("Ten");
+        dealerHand.DrawCard("Five");
+        dealerHand.DrawCard("Four");
+        AddStep("check values on each card draw", () =>
+        {
+            cardHand.OnCardDrawn = () => GameWatcher.Update(cardHand, dealerHand);
+        });
+        AddStep("add ace", () => cardHand.DrawCard("Ace"));
+        AddStep("add nine", () => cardHand.DrawCard("Nine"));
+        AddStep("add nine", () => cardHand.DrawCard("Nine"));
+        AddAssert("check hand is 19", () => cardHand.HandScore.Value == 19);
+    }
 }

@@ -18,6 +18,12 @@ public static class GameWatcher
 
         if (playerHand.HandScore.Value > 21)
         {
+            if (playerHand.HasHighAce)
+            {
+                playerHand.HandScore.Value -= 10;
+                playerHand.HasHighAce = false;
+                return;
+            }
             playerHand.HandState.Value = HandState.Bust;
             return;
         }
