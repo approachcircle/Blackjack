@@ -132,10 +132,11 @@ namespace Blackjack.Game
                 standButton,
                 rematchButton
             ];
-            playerHand.DrawCard();
-            playerHand.DrawCard();
+            // cards should be logically dealt in the order they are in the real game
             dealerHand.DrawCard();
+            playerHand.DrawCard();
             dealerHand.DrawCard(flipped: true);
+            playerHand.DrawCard();
         }
     }
 }
