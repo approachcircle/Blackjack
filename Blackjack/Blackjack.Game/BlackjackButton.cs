@@ -11,10 +11,12 @@ namespace Blackjack.Game;
 public partial class BlackjackButton : ClickableContainer
 {
     public string Text { get; set; } = string.Empty;
+    private Colour4 disabledColour;
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        disabledColour = Colour4.DarkGray.Darken(1);
         Masking = true;
         CornerRadius = 5;
         AutoSizeAxes = Axes.Both;
@@ -36,18 +38,31 @@ public partial class BlackjackButton : ClickableContainer
                 Font = FontUsage.Default.With(size: 20),
             }
         ];
+        Enabled.BindValueChanged(e =>
+        {
+            Colour = e.NewValue ? Colour4.White : disabledColour;
+        }, true);
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        // this.ScaleTo(0.8f);
-        Colour = Colour4.Aquamarine;
+        if (Enabled.Value)
+        {
+            Colour = Colour4.Aquamarine;
+        }
+        else
+        {
+            this.FadeColour(Colour4.Red)
+                .Delay(200)
+                .FadeColour(disabledColour, 200, Easing.Out);
+        }
         return true;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        Colour = Colour4.White;
+        base.OnMouseUp(e);
+        if (Enabled.Value) Colour = Colour4.White;
     }
 
     protected override bool OnHover(HoverEvent e)
