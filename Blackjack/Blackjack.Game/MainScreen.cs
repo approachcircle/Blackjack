@@ -95,13 +95,6 @@ namespace Blackjack.Game
                 Y = -10,
                 Font = FontUsage.Default.With(size: 48),
             };
-            dealerHand.OnCardFlipped = () =>
-            {
-                dealerHand.HandScore.BindValueChanged((e) =>
-                {
-                    dealerScore.Text = "Dealer's hand: " + e.NewValue;
-                }, true);
-            };
             scoresContainer.Add(dealerScore);
             scoresContainer.Add(playerScore);
             playerHand.HandState.BindValueChanged(e =>
@@ -109,6 +102,8 @@ namespace Blackjack.Game
                 if (e.NewValue is HandState.Active or HandState.NotReady or HandState.Standing) return;
                 currentGameEndOverlay?.Expire();
                 currentGameEndOverlay = new GameEndOverlay(e.NewValue);
+                AddInternal(currentGameEndOverlay);
+                currentGameEndOverlay.OnOverlayPopout = () => rematchButton.Alpha = 1.0f;
                 hitButton.Enabled.Value = false;
                 standButton.Enabled.Value = false;
                 dealerHand.HandState.BindValueChanged(dealerEvent =>
@@ -116,11 +111,21 @@ namespace Blackjack.Game
                     // only reveal card if it is present and the dealer is ready
                     if (dealerEvent.NewValue == HandState.NotReady) return;
                     dealerHand.RevealCard();
+                    // show the overlay straight away if we're bust as the player can immediately see
+                    // if their score is above 21, therefore no suspense needed
+                    if (e.NewValue is HandState.Bust)
+                        currentGameEndOverlay.Show();
                 }, true);
-                AddInternal(currentGameEndOverlay);
-                currentGameEndOverlay.OnOverlayPopout = () => rematchButton.Alpha = 1.0f;
-                currentGameEndOverlay.Show();
             }, true);
+            dealerHand.OnCardFlipped = () =>
+            {
+                dealerHand.HandScore.BindValueChanged((e) =>
+                {
+                    dealerScore.Text = "Dealer's hand: " + e.NewValue;
+                }, true);
+                if (playerHand.HandState.Value is not HandState.Bust)
+                    currentGameEndOverlay.Show();
+            };
             dealerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
             playerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
             InternalChildren =
