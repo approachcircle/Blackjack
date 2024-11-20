@@ -118,8 +118,8 @@ namespace Blackjack.Game
                     dealerHand.RevealCard();
                 }, true);
                 AddInternal(currentGameEndOverlay);
+                currentGameEndOverlay.OnOverlayPopout = () => rematchButton.Alpha = 1.0f;
                 currentGameEndOverlay.Show();
-                rematchButton.Alpha = 1.0f;
             }, true);
             dealerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);
             playerHand.OnCardDrawn = () => GameWatcher.Update(playerHand, dealerHand);

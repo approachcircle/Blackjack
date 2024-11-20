@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
@@ -20,6 +21,7 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     private const int stay_alive_duration = 1200;
     public HandState HandStateReflected => handState;
     private Track bustSample;
+    public Action OnOverlayPopout;
 
     [BackgroundDependencyLoader]
     private void load(ITrackStore tracks)
@@ -113,18 +115,26 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     {
         base.Show();
         // game ending states (with accompanying audio to determine how long they stay alive for)
-        if (HandStateReflected == HandState.Bust)
+        if (HandStateReflected == HandState.Bust && Settings.SFXEnabled.Value)
         {
             bustSample.Start();
             bustSample.Completed += () =>
             {
-                Scheduler.Add(Hide);
+                Scheduler.Add(() =>
+                {
+                    Hide();
+                    OnOverlayPopout?.Invoke();
+                });
             };
         }
         // every other overlay
         else
         {
-            Scheduler.AddDelayed(Hide, stay_alive_duration);
+            Scheduler.AddDelayed(() =>
+            {
+                Hide();
+                OnOverlayPopout?.Invoke();
+            }, stay_alive_duration);
         }
     }
 
@@ -138,7 +148,11 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     protected override void PopOut()
     {
         // this.ScaleTo(0f, 400, Easing.InQuint);
-        this.FadeOut(enter_exit_duration, Easing.InQuint);
+        this.FadeOut(enter_exit_duration, Easing.InQuint).Finally(
+            _ =>
+            {
+
+            });
         startGlowIncrease = false;
     }
 
