@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace Blackjack.Game
@@ -11,9 +12,10 @@ namespace Blackjack.Game
     {
         private CardHand playerHand;
         private CardHand dealerHand;
-        private BasicButton hitButton;
-        private BasicButton standButton;
-        private BasicButton rematchButton;
+        private BlackjackButton hitButton;
+        private BlackjackButton standButton;
+        private BlackjackButton rematchButton;
+        private BlackjackButton quitButton;
         private SpriteText playerScore;
         private SpriteText dealerScore;
         private FillFlowContainer scoresContainer;
@@ -29,7 +31,7 @@ namespace Blackjack.Game
             CardDeck.IsQuantitiesValid = false;
             playerHand = new CardHand(HandOwner.Player);
             dealerHand = new CardHand(HandOwner.Dealer);
-            hitButton = new BasicButton
+            hitButton = new BlackjackButton
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
@@ -40,7 +42,7 @@ namespace Blackjack.Game
                 // Y = -100,
                 X = 20
             };
-            standButton = new BasicButton
+            standButton = new BlackjackButton
             {
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
@@ -58,16 +60,24 @@ namespace Blackjack.Game
             // TODO: make this button flash to make it more obvious.
             // TODO: first needs to be turned into a 'BlackjackButton'
             // TODO: then specialised into a specific flashing button
-            rematchButton = new BasicButton
+            rematchButton = new BlackjackButton()
             {
                 Anchor = Anchor.BottomRight,
                 Origin = Anchor.BottomRight,
                 Text = "Rematch",
                 Action = load,
-                Width = 200,
-                Height = 100,
                 Y = -100,
                 X = -20,
+                Alpha = 0f
+            };
+            quitButton = new BlackjackButton
+            {
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Text = "Quit",
+                Action = this.Exit,
+                Y = -100,
+                X = 20,
                 Alpha = 0f
             };
             scoresContainer = new FillFlowContainer()
@@ -103,7 +113,11 @@ namespace Blackjack.Game
                 currentGameEndOverlay?.Expire();
                 currentGameEndOverlay = new GameEndOverlay(e.NewValue);
                 AddInternal(currentGameEndOverlay);
-                currentGameEndOverlay.OnOverlayPopout = () => rematchButton.Alpha = 1.0f;
+                currentGameEndOverlay.OnOverlayPopout = () =>
+                {
+                    rematchButton.Alpha = 1.0f;
+                    quitButton.Alpha = 1.0f;
+                };
                 hitButton.Enabled.Value = false;
                 standButton.Enabled.Value = false;
                 dealerHand.HandState.BindValueChanged(dealerEvent =>
@@ -135,7 +149,8 @@ namespace Blackjack.Game
                 dealerHand,
                 scoresContainer,
                 standButton,
-                rematchButton
+                rematchButton,
+                quitButton
             ];
             // cards should be logically dealt in the order they are in the real game
             dealerHand.DrawCard();

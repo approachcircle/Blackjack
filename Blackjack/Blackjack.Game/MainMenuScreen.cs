@@ -26,14 +26,14 @@ public partial class MainMenuScreen : BlackjackScreen
                 Text = "Blackjack",
                 Y = 50
             },
-            new BasicCheckbox
+            new BlackjackButton()
             {
-                LabelText = "SFX",
+                Text = "Settings",
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight,
                 X = -20,
                 Y = 20,
-                Current = { BindTarget = Settings.SFXEnabled },
+                Action = () => this.Push(new SettingsScreen())
             },
             buttonContainer = new FillFlowContainer
             {

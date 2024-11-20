@@ -18,16 +18,14 @@ public partial class BlackjackButton : ClickableContainer
         Masking = true;
         CornerRadius = 5;
         AutoSizeAxes = Axes.Both;
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
         InternalChildren =
         [
             new Box
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Width = 100,
-                Height = 50,
+                Width = 200,
+                Height = 100,
                 Colour = Color4.DimGray
             },
             new SpriteText
@@ -42,13 +40,14 @@ public partial class BlackjackButton : ClickableContainer
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        this.ScaleTo(0.8f);
+        // this.ScaleTo(0.8f);
+        Colour = Colour4.Aquamarine;
         return true;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        this.ScaleTo(1);
+        Colour = Colour4.White;
     }
 
     protected override bool OnHover(HoverEvent e)

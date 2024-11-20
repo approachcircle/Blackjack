@@ -60,7 +60,7 @@ public static class GameWatcher
 
     private static void checkFiveCardCharlie(CardHand playerHand, CardHand dealerHand)
     {
-
+        if (!Settings.FiveCardCharlie.Value) return;
         if (playerHand.CardCount >= 5 && dealerHand.CardCount >= 5)
         {
             playerHand.HandState.Value = HandState.Pushed;
