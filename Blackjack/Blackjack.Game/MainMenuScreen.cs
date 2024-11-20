@@ -3,6 +3,7 @@ using osu.Framework.Screens;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace Blackjack.Game;
@@ -24,6 +25,15 @@ public partial class MainMenuScreen : BlackjackScreen
                 Font = FontUsage.Default.With(size: 72),
                 Text = "Blackjack",
                 Y = 50
+            },
+            new BasicCheckbox
+            {
+                LabelText = "SFX",
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                X = -20,
+                Y = 20,
+                Current = { BindTarget = Settings.SFXEnabled },
             },
             buttonContainer = new FillFlowContainer
             {
