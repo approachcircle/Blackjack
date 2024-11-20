@@ -115,7 +115,7 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
     {
         // if we fade out completely, the fill flow container thinks the card isn't there anymore,
         // so tries to readjust the other cards, causing it to jump around for a few frames
-        this.FadeTo(0.01f, 250, Easing.OutQuint).ScaleTo(new Vector2(0.01f, 1), 250, Easing.OutQuint).Finally((_) =>
+        this.FadeTo(0.01f, 350, Easing.OutQuint).ScaleTo(new Vector2(0.01f, 1), 350, Easing.OutQuint).Finally((_) =>
         {
             RevealCard();
             this.FadeIn(250, Easing.InQuint).ScaleTo(Vector2.One, 250, Easing.InQuint).Finally(_ =>
