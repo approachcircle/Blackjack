@@ -26,8 +26,10 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     [BackgroundDependencyLoader]
     private void load(ITrackStore tracks)
     {
-        bustSample = tracks.Get("text_splash_fx.mp3");
-        bustSample.Volume.Value = 0.5f;
+        // bustSample = tracks.Get("text_splash_fx.mp3");
+        bustSample = tracks.Get("scrunch");
+        bustSample.Volume.Value = 0.2f;
+        bustSample.Frequency.Value = 1.0f + (new Random().Next(-10, 10) / 100.0f);
         Colour4 overlayColour;
         string overlayText;
         switch (handState)
@@ -148,11 +150,7 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     protected override void PopOut()
     {
         // this.ScaleTo(0f, 400, Easing.InQuint);
-        this.FadeOut(enter_exit_duration, Easing.InQuint).Finally(
-            _ =>
-            {
-
-            });
+        this.FadeOut(enter_exit_duration, Easing.InQuint);
         startGlowIncrease = false;
     }
 
