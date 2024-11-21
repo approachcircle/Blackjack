@@ -29,6 +29,8 @@ namespace Blackjack.Game
         private void load()
         {
             Resources.AddStore(new DllResourceStore(typeof(BlackjackResources).Assembly));
+
+            AddFont(Resources, @"Fonts/UI_Gothic");
         }
     }
 }

@@ -18,6 +18,12 @@ public static class GameWatcher
 
         if (playerHand.HandScore.Value > 21)
         {
+            if (playerHand.HasHighAce)
+            {
+                playerHand.HandScore.Value -= 10;
+                playerHand.HasHighAce = false;
+                return;
+            }
             playerHand.HandState.Value = HandState.Bust;
             return;
         }
@@ -60,7 +66,7 @@ public static class GameWatcher
 
     private static void checkFiveCardCharlie(CardHand playerHand, CardHand dealerHand)
     {
-
+        if (!Settings.FiveCardCharlie.Value) return;
         if (playerHand.CardCount >= 5 && dealerHand.CardCount >= 5)
         {
             playerHand.HandState.Value = HandState.Pushed;

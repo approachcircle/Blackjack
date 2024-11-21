@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
@@ -14,18 +15,21 @@ namespace Blackjack.Game;
 
 public partial class GameEndOverlay(HandState handState) : OverlayContainer
 {
-    public Bindable<float> GlowRadius { get; set; } = new(0.0f);
+    public Bindable<float> GlowRadius { get; } = new();
     private bool startGlowIncrease = false;
     private const int enter_exit_duration = 400;
-    private const int stay_alive_duration = 1200;
+    private const int stay_alive_duration = 800;
     public HandState HandStateReflected => handState;
     private Track bustSample;
+    public Action OnOverlayPopout;
 
     [BackgroundDependencyLoader]
     private void load(ITrackStore tracks)
     {
-        bustSample = tracks.Get("text_splash_fx.mp3");
-        bustSample.Volume.Value = 0.1f;
+        // bustSample = tracks.Get("text_splash_fx.mp3");
+        bustSample = tracks.Get("scrunch");
+        bustSample.Volume.Value = 0.2f;
+        bustSample.Frequency.Value = 1.0f + (new Random().Next(-10, 10) / 100.0f);
         Colour4 overlayColour;
         string overlayText;
         switch (handState)
@@ -106,25 +110,33 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     {
         base.Update();
         if (startGlowIncrease)
-            GlowRadius.Value = Interpolation.ValueAt(Clock.ElapsedFrameTime, GlowRadius.Value, 200.0f, 0, 2000);
+            GlowRadius.Value = Interpolation.ValueAt(Clock.ElapsedFrameTime, GlowRadius.Value, 600.0f, 0, stay_alive_duration);
     }
 
     public override void Show()
     {
         base.Show();
         // game ending states (with accompanying audio to determine how long they stay alive for)
-        if (HandStateReflected == HandState.Bust)
+        if (HandStateReflected == HandState.Bust && Settings.SFXEnabled.Value)
         {
             bustSample.Start();
             bustSample.Completed += () =>
             {
-                Scheduler.Add(Hide);
+                Scheduler.Add(() =>
+                {
+                    Hide();
+                    OnOverlayPopout?.Invoke();
+                });
             };
         }
         // every other overlay
         else
         {
-            Scheduler.AddDelayed(Hide, stay_alive_duration);
+            Scheduler.AddDelayed(() =>
+            {
+                Hide();
+                OnOverlayPopout?.Invoke();
+            }, stay_alive_duration);
         }
     }
 
