@@ -35,6 +35,13 @@ public partial class SettingsScreen : BlackjackScreen
                         Origin = Anchor.CentreLeft,
                         LabelText = "Five card charlie",
                         Current = { BindTarget = Settings.FiveCardCharlie },
+                    },
+                    new BasicCheckbox
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        LabelText = "Flashing buttons",
+                        Current = { BindTarget = Settings.FlashingButtons }
                     }
                 ]
             }

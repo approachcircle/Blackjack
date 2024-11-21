@@ -24,6 +24,7 @@ public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButto
 
     public void StartFlashing()
     {
+        if (!Settings.FlashingButtons.Value) return;
         Scheduler.Add(() =>
         {
             flashingBox.ScaleTo(1.5f, 500, Easing.Out)
