@@ -26,7 +26,7 @@ public partial class MainMenuScreen : BlackjackScreen
                 Text = "Blackjack",
                 Y = 50
             },
-            new BlackjackButton()
+            new BlackjackButton
             {
                 Text = "Settings",
                 Anchor = Anchor.TopRight,
