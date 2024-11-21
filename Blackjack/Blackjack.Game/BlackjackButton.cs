@@ -21,8 +21,8 @@ public partial class BlackjackButton(Vector2? buttonSize = null) : ClickableCont
     {
         disabledColour = Colour4.DarkGray.Darken(1);
         Size = buttonSize ?? DefaultButtonSize;
-        Masking = true;
-        CornerRadius = 5;
+        // Masking = true;
+        // CornerRadius = 5;
         InternalChild = new Container
         {
             RelativeSizeAxes = Axes.Both,

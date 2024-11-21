@@ -12,6 +12,8 @@ public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButto
     [BackgroundDependencyLoader]
     private void load()
     {
+        // Masking = true;
+        // CornerRadius = 5;
         Add(flashingBox = new Box
         {
             Anchor = Anchor.Centre,
