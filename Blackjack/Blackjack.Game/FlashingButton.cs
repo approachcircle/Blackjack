@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
@@ -8,19 +9,24 @@ namespace Blackjack.Game;
 public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButton(buttonSize)
 {
     private Box flashingBox;
+    private Container flashingContainer;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        // Masking = true;
-        // CornerRadius = 5;
-        Add(flashingBox = new Box
+        Add(flashingContainer = new Container
         {
+            RelativeSizeAxes = Axes.Both,
+            Masking = true,
+            CornerRadius = 5,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Colour = BackgroundColour,
             Depth = 1.0f,
-            Size = buttonSize ?? DefaultButtonSize
+            Child = flashingBox = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = BackgroundColour,
+            }
         });
     }
 
@@ -29,7 +35,7 @@ public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButto
         if (!Settings.FlashingButtons.Value) return;
         Scheduler.Add(() =>
         {
-            flashingBox.ScaleTo(1.5f, 500, Easing.Out)
+            flashingContainer.ScaleTo(1.5f, 500, Easing.Out)
                 .FadeOut(500, Easing.Out)
                 .Then(e => e.Delay(500).ScaleTo(1.0f).FadeIn())
                 .Finally(_ => StartFlashing());

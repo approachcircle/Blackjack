@@ -14,7 +14,7 @@ public partial class BlackjackButton(Vector2? buttonSize = null) : ClickableCont
     public string Text { get; set; } = string.Empty;
     private Colour4 disabledColour;
     protected Colour4 BackgroundColour { get; } = Color4.DimGray;
-    protected Vector2 DefaultButtonSize { get; } = new(200, 100);
+    protected Vector2 DefaultButtonSize { get; } = new(175, 100);
 
     [BackgroundDependencyLoader]
     private void load()
