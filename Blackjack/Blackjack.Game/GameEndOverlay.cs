@@ -15,10 +15,10 @@ namespace Blackjack.Game;
 
 public partial class GameEndOverlay(HandState handState) : OverlayContainer
 {
-    public Bindable<float> GlowRadius { get; set; } = new(0.0f);
+    public Bindable<float> GlowRadius { get; } = new();
     private bool startGlowIncrease = false;
     private const int enter_exit_duration = 400;
-    private const int stay_alive_duration = 1200;
+    private const int stay_alive_duration = 800;
     public HandState HandStateReflected => handState;
     private Track bustSample;
     public Action OnOverlayPopout;
@@ -110,7 +110,7 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
     {
         base.Update();
         if (startGlowIncrease)
-            GlowRadius.Value = Interpolation.ValueAt(Clock.ElapsedFrameTime, GlowRadius.Value, 200.0f, 0, 2000);
+            GlowRadius.Value = Interpolation.ValueAt(Clock.ElapsedFrameTime, GlowRadius.Value, 600.0f, 0, stay_alive_duration);
     }
 
     public override void Show()
