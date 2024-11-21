@@ -8,7 +8,6 @@ namespace Blackjack.Game;
 
 public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButton(buttonSize)
 {
-    private Box flashingBox;
     private Container flashingContainer;
 
     [BackgroundDependencyLoader]
@@ -22,7 +21,7 @@ public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButto
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Depth = 1.0f,
-            Child = flashingBox = new Box
+            Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = BackgroundColour,
