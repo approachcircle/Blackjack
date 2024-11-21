@@ -14,7 +14,7 @@ namespace Blackjack.Game
         private CardHand dealerHand;
         private BlackjackButton hitButton;
         private BlackjackButton standButton;
-        private BlackjackButton rematchButton;
+        private FlashingButton rematchButton;
         private BlackjackButton quitButton;
         private SpriteText playerScore;
         private SpriteText dealerScore;
@@ -57,18 +57,25 @@ namespace Blackjack.Game
                 // Y = -100,
                 X = -20
             };
-            // TODO: make this button flash to make it more obvious.
-            // TODO: first needs to be turned into a 'BlackjackButton'
-            // TODO: then specialised into a specific flashing button
-            rematchButton = new BlackjackButton()
+            rematchButton = new FlashingButton
             {
                 Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomRight,
+                Origin = Anchor.Centre,
                 Text = "Rematch",
                 Action = load,
                 Y = -100,
                 X = -20,
                 Alpha = 0f
+            };
+            // i hate this so much, there must be a better way
+            // please tell me there is
+            // i just want transformations to be applied NOT from the origin
+            // it works.......... but at what cost.........
+            // https://github.com/ppy/osu-framework/discussions/6431
+            rematchButton.OnLoadComplete += d =>
+            {
+                d.X -= d.Width / 2;
+                d.Y -= d.Height / 2;
             };
             quitButton = new BlackjackButton
             {
@@ -117,6 +124,7 @@ namespace Blackjack.Game
                 {
                     rematchButton.Alpha = 1.0f;
                     quitButton.Alpha = 1.0f;
+                    rematchButton.StartFlashing();
                 };
                 hitButton.Enabled.Value = false;
                 standButton.Enabled.Value = false;

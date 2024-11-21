@@ -4,6 +4,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osuTK;
 using osuTK.Graphics;
 
 namespace Blackjack.Game;
@@ -12,6 +13,8 @@ public partial class BlackjackButton : ClickableContainer
 {
     public string Text { get; set; } = string.Empty;
     private Colour4 disabledColour;
+    protected Colour4 BackgroundColour { get; } = Color4.DimGray;
+    protected Vector2 ButtonSize { get; } = new(200, 100);
 
     [BackgroundDependencyLoader]
     private void load()
@@ -26,9 +29,8 @@ public partial class BlackjackButton : ClickableContainer
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Width = 200,
-                Height = 100,
-                Colour = Color4.DimGray
+                Size = ButtonSize,
+                Colour = BackgroundColour
             },
             new SpriteText
             {
