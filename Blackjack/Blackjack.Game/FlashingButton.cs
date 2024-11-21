@@ -5,7 +5,7 @@ using osuTK;
 
 namespace Blackjack.Game;
 
-public partial class FlashingButton : BlackjackButton
+public partial class FlashingButton(Vector2? buttonSize = null) : BlackjackButton(buttonSize)
 {
     private Box flashingBox;
 
@@ -17,8 +17,8 @@ public partial class FlashingButton : BlackjackButton
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Colour = BackgroundColour,
-            Size = ButtonSize,
-            Depth = 1.0f
+            Depth = 1.0f,
+            Size = buttonSize ?? DefaultButtonSize
         });
     }
 

@@ -9,37 +9,38 @@ using osuTK.Graphics;
 
 namespace Blackjack.Game;
 
-public partial class BlackjackButton : ClickableContainer
+public partial class BlackjackButton(Vector2? buttonSize = null) : ClickableContainer
 {
     public string Text { get; set; } = string.Empty;
     private Colour4 disabledColour;
     protected Colour4 BackgroundColour { get; } = Color4.DimGray;
-    protected Vector2 ButtonSize { get; } = new(200, 100);
+    protected Vector2 DefaultButtonSize { get; } = new(200, 100);
 
     [BackgroundDependencyLoader]
     private void load()
     {
         disabledColour = Colour4.DarkGray.Darken(1);
-        Masking = true;
-        CornerRadius = 5;
-        AutoSizeAxes = Axes.Both;
-        InternalChildren =
-        [
-            new Box
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = ButtonSize,
-                Colour = BackgroundColour
-            },
-            new SpriteText
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Text = Text,
-                Font = FontUsage.Default.With(size: 20),
-            }
-        ];
+        Size = buttonSize ?? DefaultButtonSize;
+        InternalChild = new Container
+        {
+            RelativeSizeAxes = Axes.Both,
+            Masking = true,
+            CornerRadius = 5,
+            Children = [
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = BackgroundColour
+                },
+                new SpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Text = Text,
+                    Font = FontUsage.Default.With(size: 20)
+                }
+            ]
+        };
         Enabled.BindValueChanged(e =>
         {
             Colour = e.NewValue ? Colour4.White : disabledColour;

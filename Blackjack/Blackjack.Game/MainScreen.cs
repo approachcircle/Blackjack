@@ -60,22 +60,12 @@ namespace Blackjack.Game
             rematchButton = new FlashingButton
             {
                 Anchor = Anchor.BottomRight,
-                Origin = Anchor.Centre,
+                Origin = Anchor.BottomRight,
                 Text = "Rematch",
                 Action = load,
                 Y = -100,
                 X = -20,
                 Alpha = 0f
-            };
-            // i hate this so much, there must be a better way
-            // please tell me there is
-            // i just want transformations to be applied NOT from the origin
-            // it works.......... but at what cost.........
-            // https://github.com/ppy/osu-framework/discussions/6431
-            rematchButton.OnLoadComplete += d =>
-            {
-                d.X -= d.Width / 2;
-                d.Y -= d.Height / 2;
             };
             quitButton = new BlackjackButton
             {

@@ -42,8 +42,12 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
                 overlayColour = Colour4.Red;
                 overlayText = "Beat by dealer";
                 break;
-            case HandState.Blackjack:
+            case HandState.PlayerBlackjack:
                 overlayColour = Colour4.Green;
+                overlayText = "BLACKJACK";
+                break;
+            case HandState.DealerBlackjack:
+                overlayColour = Colour4.Red;
                 overlayText = "BLACKJACK";
                 break;
             case HandState.BeatDealer:
@@ -54,8 +58,12 @@ public partial class GameEndOverlay(HandState handState) : OverlayContainer
                 overlayColour = Colour4.Green;
                 overlayText = "Dealer bust";
                 break;
-            case HandState.TwentyOne:
+            case HandState.PlayerTwentyOne:
                 overlayColour = Colour4.Green;
+                overlayText = "Twenty one";
+                break;
+            case HandState.DealerTwentyOne:
+                overlayColour = Colour4.Red;
                 overlayText = "Twenty one";
                 break;
             case HandState.PlayerFiveCardCharlie:

@@ -12,7 +12,7 @@ public static class GameWatcher
 
         if (playerHand.HandScore.Value == 21)
         {
-            playerHand.HandState.Value = playerHand.CardCount == 2 ? HandState.Blackjack : HandState.TwentyOne;
+            playerHand.HandState.Value = playerHand.CardCount == 2 ? HandState.PlayerBlackjack : HandState.PlayerTwentyOne;
             return;
         }
 
@@ -43,8 +43,20 @@ public static class GameWatcher
                 dealerHand.DrawCard();
             }
 
+            if (dealerHand.HandScore.Value == 21)
+            {
+                playerHand.HandState.Value = dealerHand.CardCount == 2 ? HandState.DealerBlackjack : HandState.DealerTwentyOne;
+                return;
+            }
+
             if (dealerHand.HandScore.Value > 21)
             {
+                if (dealerHand.HasHighAce)
+                {
+                    dealerHand.HandScore.Value -= 10;
+                    dealerHand.HasHighAce = false;
+                    return;
+                }
                 playerHand.HandState.Value = HandState.DealerBust;
                 return;
             }
