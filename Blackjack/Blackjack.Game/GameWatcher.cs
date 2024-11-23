@@ -18,10 +18,10 @@ public static class GameWatcher
 
         if (playerHand.HandScore.Value > 21)
         {
-            if (playerHand.HasHighAce)
+            if (playerHand.HighAces > 0)
             {
                 playerHand.HandScore.Value -= 10;
-                playerHand.HasHighAce = false;
+                playerHand.HighAces--;
                 return;
             }
             playerHand.HandState.Value = HandState.Bust;
@@ -38,11 +38,6 @@ public static class GameWatcher
 
         if (playerHand.HandState.Value == HandState.Standing)
         {
-            while (dealerHand.HandScore.Value < 17)
-            {
-                dealerHand.DrawCard();
-            }
-
             if (dealerHand.HandScore.Value == 21)
             {
                 playerHand.HandState.Value = dealerHand.CardCount == 2 ? HandState.DealerBlackjack : HandState.DealerTwentyOne;
@@ -51,10 +46,10 @@ public static class GameWatcher
 
             if (dealerHand.HandScore.Value > 21)
             {
-                if (dealerHand.HasHighAce)
+                if (dealerHand.HighAces > 0)
                 {
                     dealerHand.HandScore.Value -= 10;
-                    dealerHand.HasHighAce = false;
+                    dealerHand.HighAces--;
                     return;
                 }
                 playerHand.HandState.Value = HandState.DealerBust;
@@ -63,14 +58,21 @@ public static class GameWatcher
 
             checkFiveCardCharlie(playerHand, dealerHand);
 
-            if (playerHand.HandScore.Value > dealerHand.HandScore.Value)
-            {
-                playerHand.HandState.Value = HandState.BeatDealer;
-                return;
-            }
             if (dealerHand.HandScore.Value > playerHand.HandScore.Value)
             {
                 playerHand.HandState.Value = HandState.BeatByDealer;
+                return;
+            }
+
+            if (dealerHand.HandScore.Value < 17)
+            {
+                dealerHand.DrawCard();
+                return;
+            }
+
+            if (playerHand.HandScore.Value > dealerHand.HandScore.Value)
+            {
+                playerHand.HandState.Value = HandState.BeatDealer;
                 return;
             }
         }
@@ -79,6 +81,7 @@ public static class GameWatcher
     private static void checkFiveCardCharlie(CardHand playerHand, CardHand dealerHand)
     {
         if (!Settings.FiveCardCharlie.Value) return;
+        if (playerHand.HandState.Value is HandState.Bust) return;
         if (playerHand.CardCount >= 5 && dealerHand.CardCount >= 5)
         {
             playerHand.HandState.Value = HandState.Pushed;
