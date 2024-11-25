@@ -2,7 +2,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -39,7 +38,6 @@ namespace Blackjack.Game
                 Action = () => playerHand.DrawCard(),
                 Width = 200,
                 Height = 100,
-                // Y = -100,
                 X = 20
             };
             standButton = new BlackjackButton
@@ -54,7 +52,6 @@ namespace Blackjack.Game
                 },
                 Width = 200,
                 Height = 100,
-                // Y = -100,
                 X = -20
             };
             rematchButton = new FlashingButton

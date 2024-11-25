@@ -11,16 +11,16 @@ namespace Blackjack.Game;
 
 public partial class BlackjackButton(Vector2? buttonSize = null) : ClickableContainer
 {
-    public string Text { get; set; } = string.Empty;
+    public string Text { get; init; } = string.Empty;
     private Colour4 disabledColour;
     protected Colour4 BackgroundColour { get; } = Color4.DimGray;
-    protected Vector2 DefaultButtonSize { get; } = new(175, 100);
+    private Vector2 defaultButtonSize { get; } = new(175, 100);
 
     [BackgroundDependencyLoader]
     private void load()
     {
         disabledColour = Colour4.DarkGray.Darken(1);
-        Size = buttonSize ?? DefaultButtonSize;
+        Size = buttonSize ?? defaultButtonSize;
         // Masking = true;
         // CornerRadius = 5;
         InternalChild = new Container
