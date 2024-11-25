@@ -1,9 +1,11 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using Blackjack.Game.Online;
+using Microsoft.AspNetCore.SignalR.Client;
+using osu.Framework.Allocation;
 using osu.Framework.Screens;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace Blackjack.Game;
@@ -11,8 +13,9 @@ namespace Blackjack.Game;
 public partial class MainMenuScreen : BlackjackScreen
 {
     private FillFlowContainer buttonContainer;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private async void load()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -61,6 +64,24 @@ public partial class MainMenuScreen : BlackjackScreen
                 Text = "Exit"
             }
         ]);
+        try
+        {
+            await APIAccess.Connection.StartAsync();
+        }
+        catch (Exception e)
+        {
+            // ignored
+            // for now
+        }
+
+        APIAccess.Connection.On<string>("ReceiveMessage", message =>
+        {
+            Scheduler.Add(() =>
+            {
+                Console.WriteLine(message);
+            });
+        });
+        await APIAccess.Connection.InvokeAsync("SendMessage", "good morning");
     }
 
     public override bool OnExiting(ScreenExitEvent e)
