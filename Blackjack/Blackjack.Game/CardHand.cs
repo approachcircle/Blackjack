@@ -31,7 +31,7 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
 
     public Bindable<HandState> HandState { get; } = new(handOwner == HandOwner.Player ? Game.HandState.Active : Game.HandState.NotReady);
     private CardModel flippedCard;
-    public bool HasHighAce { get; set; } = false;
+    public int HighAces { get; set; } = 0;
     public int CardCount { get; private set; } = 0;
 
     [BackgroundDependencyLoader]
@@ -73,7 +73,7 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
         {
             if (HandScore.Value + 11 > 21) HandScore.Value++; // Ace low (1)
             else HandScore.Value += 11; // Ace high (11)
-            HasHighAce = true;
+            HighAces++;
         }
         else
         {
