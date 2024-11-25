@@ -76,4 +76,51 @@ public sealed partial class CardValueTest : BlackjackTestScene
         AddStep("add nine", () => cardHand.DrawCard("Nine"));
         AddAssert("check hand is 19", () => cardHand.HandScore.Value == 19);
     }
+
+
+    [Test]
+    public void TestFiveCardCharlie()
+    {
+        CardHand dealerHand = new CardHand(HandOwner.Dealer);
+        dealerHand.DrawCard("Ten");
+        dealerHand.DrawCard("Five");
+        dealerHand.DrawCard("Four");
+        AddStep("check values on each card draw", () =>
+        {
+            cardHand.OnCardDrawn = () => GameWatcher.Update(cardHand, dealerHand);
+        });
+        AddStep("add low cards", () =>
+        {
+            cardHand.DrawCard("Two");
+            cardHand.DrawCard("Two");
+            cardHand.DrawCard("Two");
+            cardHand.DrawCard("Two");
+            cardHand.DrawCard("Two");
+        });
+        AddAssert("assert player hand state is five card charlie",
+            () => cardHand.HandState.Value == HandState.PlayerFiveCardCharlie);
+    }
+
+    [Test]
+    public void TestFiveCardCharlieWithAces()
+    {
+        CardHand dealerHand = new CardHand(HandOwner.Dealer);
+        dealerHand.DrawCard("Two");
+        dealerHand.DrawCard("Two");
+        dealerHand.DrawCard("Two");
+        AddStep("check values on each card draw", () =>
+        {
+            cardHand.OnCardDrawn = () => GameWatcher.Update(cardHand, dealerHand);
+        });
+        AddStep("add low cards and aces", () =>
+        {
+            cardHand.DrawCard("Two");
+            cardHand.DrawCard("Ace");
+            cardHand.DrawCard("Three");
+            cardHand.DrawCard("Ace");
+            cardHand.DrawCard("Two");
+        });
+        AddAssert("assert player hand state is five card charlie",
+            () => cardHand.HandState.Value == HandState.PlayerFiveCardCharlie);
+    }
 }
