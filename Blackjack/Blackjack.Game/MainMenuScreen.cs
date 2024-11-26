@@ -64,15 +64,7 @@ public partial class MainMenuScreen : BlackjackScreen
                 Text = "Exit"
             }
         ]);
-        try
-        {
-            await APIAccess.Connection.StartAsync();
-        }
-        catch (Exception e)
-        {
-            // ignored
-            // for now
-        }
+
 
         APIAccess.Connection.On<string>("ReceiveMessage", message =>
         {
@@ -81,7 +73,10 @@ public partial class MainMenuScreen : BlackjackScreen
                 Console.WriteLine(message);
             });
         });
-        await APIAccess.Connection.InvokeAsync("SendMessage", "good morning");
+        if (APIAccess.Connection.State == HubConnectionState.Connected)
+        {
+            await APIAccess.Connection.InvokeAsync("SendMessage", "good morning");
+        }
     }
 
     public override bool OnExiting(ScreenExitEvent e)

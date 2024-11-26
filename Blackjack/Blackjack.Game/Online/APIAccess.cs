@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using osu.Framework.Bindables;
 
 namespace Blackjack.Game.Online;
 
@@ -10,5 +11,10 @@ public class APIAccess
     public Task Connect()
     {
         return Connection.StartAsync();
+    }
+
+    public Task Disconnect()
+    {
+        return Connection.StopAsync();
     }
 }
