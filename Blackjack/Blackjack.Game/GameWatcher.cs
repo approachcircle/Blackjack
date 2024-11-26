@@ -15,6 +15,7 @@ public static class GameWatcher
             playerHand.HandState.Value = playerHand.CardCount == 2 ? HandState.PlayerBlackjack : HandState.PlayerTwentyOne;
             return;
         }
+        //TODO: probably stand on 21 to allow the dealer to get the same opportunity
 
         if (playerHand.HandScore.Value > 21)
         {
