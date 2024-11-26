@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Threading;
 using osuTK;
 
 namespace Blackjack.Game;
@@ -15,6 +16,7 @@ public partial class ServerConnectionOverlay : OverlayContainer
     private SpriteText overlayText;
     public Bindable<string> OverlayText { get; } = new("Nothing to show");
     private bool suppressAutomaticHide;
+    private ScheduledDelegate hideDelegate;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -44,18 +46,27 @@ public partial class ServerConnectionOverlay : OverlayContainer
         });
         APIAccess.Connection.Closed += _ =>
         {
-            OverlayText.Value = "Disconnected!";
+            Scheduler.Add(() =>
+            {
+                OverlayText.Value = "Disconnected!";
+            });
             return null;
         };
         APIAccess.Connection.Reconnecting += _ =>
         {
-            suppressAutomaticHide = true;
-            OverlayText.Value = "Reconnecting...";
+            Scheduler.Add(() =>
+            {
+                suppressAutomaticHide = true;
+                OverlayText.Value = "Reconnecting...";
+            });
             return null;
         };
         APIAccess.Connection.Reconnected += _ =>
         {
-            OverlayText.Value = "Reconnected!";
+            Scheduler.Add(() =>
+            {
+                OverlayText.Value = "Reconnected!";
+            });
             return null;
         };
     }
@@ -65,8 +76,13 @@ public partial class ServerConnectionOverlay : OverlayContainer
         base.Show();
         if (!suppressAutomaticHide)
         {
-            Scheduler.AddDelayed(Hide, 5000);
+            hideDelegate = Scheduler.AddDelayed(Hide, 5000);
         }
+        else
+        {
+            hideDelegate?.Cancel();
+        }
+        PopIn();
         suppressAutomaticHide = false;
     }
 
