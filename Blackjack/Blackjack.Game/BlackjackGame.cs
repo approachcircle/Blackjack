@@ -39,14 +39,12 @@ namespace Blackjack.Game
                     await Console.Error.WriteLineAsync(e.Message);
                     await Task.Delay(5000);
                 }
-                if (APIAccess.Connection.State == HubConnectionState.Connected)
+                if (APIAccess.Connection.State != HubConnectionState.Connected) continue;
+                Scheduler.Add(() =>
                 {
-                    Scheduler.Add(() =>
-                    {
-                        serverConnectionOverlay.OverlayText.Value = "Connected!";
-                    });
-                    break;
-                }
+                    serverConnectionOverlay.OverlayText.Value = "Connected!";
+                });
+                break;
             }
         }
 
