@@ -28,6 +28,7 @@ namespace Blackjack.Game
 
         private async void initServerConnection()
         {
+            serverConnectionOverlay.OverlayText.Value = "X Disconnected!";
             while (true)
             {
                 try
