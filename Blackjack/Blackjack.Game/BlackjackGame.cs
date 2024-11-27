@@ -12,41 +12,28 @@ namespace Blackjack.Game
     public partial class BlackjackGame : BlackjackGameBase
     {
         private ScreenStack screenStack;
-        private readonly ServerConnectionOverlay serverConnectionOverlay = new();
+        private ServerConnectionOverlay serverConnectionOverlay;
 
         [BackgroundDependencyLoader]
         private void load()
         {
             Add(screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both });
+            serverConnectionOverlay = new ServerConnectionOverlay("connecting...");
             Add(serverConnectionOverlay);
-            initServerConnection();
-            // Scheduler.AddDelayed(() =>
-            // {
-            //     Console.WriteLine($"connection state {APIAccess.Connection.State}");
-            // }, 500, true);
-        }
-
-        private async void initServerConnection()
-        {
-            serverConnectionOverlay.OverlayText.Value = "X Disconnected!";
-            while (true)
+            Add(new ConnectionStateText());
+            _ = StatefulSignalRClient.Instance.Connect();
+            StatefulSignalRClient.Instance.ApiState.BindValueChanged(e =>
             {
-                try
+                Console.WriteLine(e.NewValue);
+                if (e.NewValue == ApiState.Online)
                 {
-                    await APIAccess.Connection.StartAsync();
+                    serverConnectionOverlay.Complete();
                 }
-                catch (Exception e)
+                else
                 {
-                    await Console.Error.WriteLineAsync(e.Message);
-                    await Task.Delay(5000);
+                    serverConnectionOverlay.StateChanged(e.NewValue.ToString());
                 }
-                if (APIAccess.Connection.State != HubConnectionState.Connected) continue;
-                Scheduler.Add(() =>
-                {
-                    serverConnectionOverlay.OverlayText.Value = "Connected!";
-                });
-                break;
-            }
+            }, true);
         }
 
         protected override void LoadComplete()

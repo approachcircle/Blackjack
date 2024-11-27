@@ -11,12 +11,12 @@ using osuTK;
 
 namespace Blackjack.Game;
 
-public partial class ServerConnectionOverlay : OverlayContainer
+public partial class ServerConnectionOverlay(string initialText) : OverlayContainer
 {
     private SpriteText overlayText;
-    public Bindable<string> OverlayText { get; } = new("Nothing to show");
-    private bool suppressAutomaticHide;
-    private ScheduledDelegate hideDelegate;
+    public Bindable<string> OverlayText { get; } = new(initialText);
+    // private bool suppressAutomaticHide;
+    // private ScheduledDelegate hideDelegate;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -26,7 +26,7 @@ public partial class ServerConnectionOverlay : OverlayContainer
         Origin = Anchor.BottomCentre;
         Add(new Box
         {
-            Scale = new Vector2(200, 20),
+            Scale = new Vector2(220, 30),
             Colour = Colour4.DimGray,
             Alpha = 0.5f,
             Anchor = Anchor.Centre,
@@ -38,61 +38,35 @@ public partial class ServerConnectionOverlay : OverlayContainer
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Font = FontUsage.Default.With(size: 20),
+            Text = initialText
         });
         OverlayText.BindValueChanged(e =>
         {
             overlayText.Text = e.NewValue;
-            Show();
-        });
-        APIAccess.Connection.Closed += _ =>
-        {
-            Scheduler.Add(() =>
-            {
-                OverlayText.Value = "Disconnected!";
-            });
-            return null;
-        };
-        APIAccess.Connection.Reconnecting += _ =>
-        {
-            Scheduler.Add(() =>
-            {
-                suppressAutomaticHide = true;
-                OverlayText.Value = "Reconnecting...";
-            });
-            return null;
-        };
-        APIAccess.Connection.Reconnected += _ =>
-        {
-            Scheduler.Add(() =>
-            {
-                OverlayText.Value = "Reconnected!";
-            });
-            return null;
-        };
+        }, true);
+        PopIn();
     }
 
-    public override void Show()
+    public void Complete()
     {
-        base.Show();
-        if (!suppressAutomaticHide)
-        {
-            hideDelegate = Scheduler.AddDelayed(Hide, 5000);
-        }
-        else
-        {
-            hideDelegate?.Cancel();
-        }
+        overlayText.Text = "Connected!";
+        Scheduler.AddDelayed(PopOut, 2500);
+    }
+
+    public void StateChanged(string stateRepresentation)
+    {
+        OverlayText.Value = stateRepresentation;
         PopIn();
-        suppressAutomaticHide = false;
     }
 
     protected override void PopIn()
     {
-        this.FadeInFromZero(1000, Easing.InQuint);
+        // this.FadeIn(500);
+        Alpha = 1.0f;
     }
 
     protected override void PopOut()
     {
-        this.FadeOut(1000, Easing.OutQuint);
+        this.FadeOut(500, Easing.InQuint);
     }
 }

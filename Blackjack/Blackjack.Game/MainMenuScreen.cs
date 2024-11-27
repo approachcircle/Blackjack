@@ -64,24 +64,23 @@ public partial class MainMenuScreen : BlackjackScreen
                 Text = "Exit"
             }
         ]);
-
-
-        APIAccess.Connection.On<string>("ReceiveMessage", message =>
-        {
-            Scheduler.Add(() =>
-            {
-                Console.WriteLine(message);
-            });
-        });
-        if (APIAccess.Connection.State == HubConnectionState.Connected)
-        {
-            await APIAccess.Connection.InvokeAsync("SendMessage", "good morning");
-        }
+        // StatefulSignalRClient.Connection.On<string>("ReceiveMessage", message =>
+        // {
+        //     Scheduler.Add(() =>
+        //     {
+        //         Console.WriteLine(message);
+        //     });
+        // });
+        // if (StatefulSignalRClient.Connection.State == HubConnectionState.Connected)
+        // {
+        //     await StatefulSignalRClient.Connection.InvokeAsync("SendMessage", "good morning");
+        // }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         var result = base.OnExiting(e);
+        _ = StatefulSignalRClient.Instance.Disconnect();
         Game.Exit();
         return result;
     }
