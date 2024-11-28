@@ -11,9 +11,10 @@ public partial class ConnectionStateText : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
-        Y = -50;
+        Anchor = Anchor.BottomRight;
+        Origin = Anchor.BottomRight;
+        Y = -5;
+        X = -5;
         AutoSizeAxes = Axes.Both;
         SpriteText text = new SpriteText
         {
