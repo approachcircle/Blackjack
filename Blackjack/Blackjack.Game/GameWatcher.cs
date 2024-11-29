@@ -79,6 +79,23 @@ public static class GameWatcher
         }
     }
 
+    public static RankChangeOutcome PlayerRankOutcome(CardHand playerHand)
+    {
+        switch (playerHand.HandState.Value)
+        {
+            case HandState.Bust:
+            case HandState.DealerBlackjack:
+            case HandState.BeatByDealer:
+            case HandState.DealerTwentyOne:
+            case HandState.DealerFiveCardCharlie:
+                return RankChangeOutcome.Lose;
+            case HandState.Pushed:
+                return RankChangeOutcome.Nothing;
+            default:
+                return RankChangeOutcome.Gain;
+        }
+    }
+
     private static void checkFiveCardCharlie(CardHand playerHand, CardHand dealerHand)
     {
         if (!Settings.FiveCardCharlie.Value) return;

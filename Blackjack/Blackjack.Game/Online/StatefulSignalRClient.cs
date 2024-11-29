@@ -7,10 +7,10 @@ namespace Blackjack.Game.Online;
 
 public class StatefulSignalRClient
 {
-    public static StatefulSignalRClient Instance { get; private set; } = new StatefulSignalRClient();
+    public static StatefulSignalRClient Instance { get; private set; } = new();
     private HubConnection connection { get; } = new HubConnectionBuilder().WithUrl("http://localhost:5183/online").WithAutomaticReconnect().Build();
 
-    public Bindable<ApiState> ApiState { get; private set; } = new(Online.ApiState.Offline);
+    public Bindable<ApiState> ApiState { get; } = new(Online.ApiState.Offline);
     private const int retry_delay = 2500;
 
     private StatefulSignalRClient()
@@ -30,7 +30,7 @@ public class StatefulSignalRClient
         };
         connection.Reconnecting += e =>
         {
-            ApiState.Value = Online.ApiState.Reconnecting;
+            ApiState.Value = Online.ApiState.Connecting;
             if (e is not null)
             {
                 Console.Error.WriteLine(e);
@@ -85,7 +85,7 @@ public class StatefulSignalRClient
             }
             catch (Exception e)
             {
-                ApiState.Value = Online.ApiState.Reconnecting;
+                ApiState.Value = Online.ApiState.Connecting;
                 await Task.Delay(retry_delay);
             }
         }
@@ -104,5 +104,11 @@ public class StatefulSignalRClient
         {
             await Console.Error.WriteLineAsync("failed to disconnect: " + e);
         }
+    }
+
+    public async Task SubmitScore(RankChangeOutcome outcome, int cardCount)
+    {
+        if (ApiState.Value != Online.ApiState.Online) return;
+        await connection.InvokeAsync("SubmitScore", outcome, cardCount);
     }
 }

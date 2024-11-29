@@ -1,3 +1,4 @@
+using Blackjack.Game.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -74,7 +75,7 @@ namespace Blackjack.Game
                 X = 20,
                 Alpha = 0f
             };
-            scoresContainer = new FillFlowContainer()
+            scoresContainer = new FillFlowContainer
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -92,7 +93,7 @@ namespace Blackjack.Game
             {
                 playerScore.Text = "Your hand: " + e.NewValue;
             }, true);
-            dealerScore = new SpriteText()
+            dealerScore = new SpriteText
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -124,11 +125,15 @@ namespace Blackjack.Game
                     // if their score is above 21, therefore no suspense needed
                     if (e.NewValue is HandState.Bust)
                         currentGameEndOverlay.Show();
+                    Scheduler.Add(async void () =>
+                    {
+                        await StatefulSignalRClient.Instance.SubmitScore(GameWatcher.PlayerRankOutcome(playerHand), playerHand.CardCount);
+                    });
                 }, true);
             }, true);
             dealerHand.OnCardFlipped = () =>
             {
-                dealerHand.HandScore.BindValueChanged((e) =>
+                dealerHand.HandScore.BindValueChanged(e =>
                 {
                     dealerScore.Text = "Dealer's hand: " + e.NewValue;
                 }, true);
