@@ -17,7 +17,7 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
 {
     public static Vector2 CardSize => new(160, 260);
     private static Vector2 cardSymbolPadding => new(30, 35);
-    private Bindable<bool> isCardFlipped = new();
+    private readonly Bindable<bool> isCardFlipped = new();
     private SpriteText topLeftSymbol;
     private SpriteText centreSymbol;
     private SpriteText bottomRightSymbol;
@@ -117,7 +117,7 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
         // so tries to readjust the other cards, causing it to jump around for a few frames
         this.FadeTo(0.01f, 350, Easing.OutQuint).ScaleTo(new Vector2(0.01f, 1), 350, Easing.OutQuint).Finally((_) =>
         {
-            RevealCard();
+            revealCard();
             this.FadeIn(250, Easing.InQuint).ScaleTo(Vector2.One, 250, Easing.InQuint).Finally(_ =>
             {
                 playRandomFlipSample();
@@ -126,7 +126,7 @@ public partial class CardModel(string card, HandOwner handOwner) : Container
         });
     }
 
-    public void RevealCard()
+    private void revealCard()
     {
         isCardFlipped.Value = false;
     }

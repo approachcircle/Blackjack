@@ -33,8 +33,8 @@ public partial class SettingsScreen : BlackjackScreen
                     {
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        LabelText = "Five card charlie",
-                        Current = { BindTarget = Settings.FiveCardCharlie },
+                        LabelText = "Five card charlie (currently disabled)", // disabled until its fixed
+                        // Current = { BindTarget = Settings.FiveCardCharlie }
                     },
                     new BasicCheckbox
                     {

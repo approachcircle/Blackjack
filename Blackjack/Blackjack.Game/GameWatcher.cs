@@ -15,6 +15,7 @@ public static class GameWatcher
             playerHand.HandState.Value = playerHand.CardCount == 2 ? HandState.PlayerBlackjack : HandState.PlayerTwentyOne;
             return;
         }
+        //TODO: probably stand on 21 to allow the dealer to get the same opportunity
 
         if (playerHand.HandScore.Value > 21)
         {
@@ -75,6 +76,23 @@ public static class GameWatcher
                 playerHand.HandState.Value = HandState.BeatDealer;
                 return;
             }
+        }
+    }
+
+    public static RankChangeOutcome PlayerRankOutcome(CardHand playerHand)
+    {
+        switch (playerHand.HandState.Value)
+        {
+            case HandState.Bust:
+            case HandState.DealerBlackjack:
+            case HandState.BeatByDealer:
+            case HandState.DealerTwentyOne:
+            case HandState.DealerFiveCardCharlie:
+                return RankChangeOutcome.Lose;
+            case HandState.Pushed:
+                return RankChangeOutcome.Nothing;
+            default:
+                return RankChangeOutcome.Gain;
         }
     }
 

@@ -11,7 +11,7 @@ namespace Blackjack.Game;
 public partial class CardHand(HandOwner handOwner) : FillFlowContainer
 {
     private static float containerPadding => -20;
-    public Bindable<int> HandScore { get; set; } = new();
+    public Bindable<int> HandScore { get; } = new();
     private Action onCardFlipped;
 
     public Action OnCardFlipped
@@ -31,8 +31,8 @@ public partial class CardHand(HandOwner handOwner) : FillFlowContainer
 
     public Bindable<HandState> HandState { get; } = new(handOwner == HandOwner.Player ? Game.HandState.Active : Game.HandState.NotReady);
     private CardModel flippedCard;
-    public int HighAces { get; set; } = 0;
-    public int CardCount { get; private set; } = 0;
+    public int HighAces { get; set; }
+    public int CardCount { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()

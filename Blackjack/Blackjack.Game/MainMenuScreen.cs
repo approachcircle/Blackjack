@@ -1,9 +1,11 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using Blackjack.Game.Online;
+using Microsoft.AspNetCore.SignalR.Client;
+using osu.Framework.Allocation;
 using osu.Framework.Screens;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace Blackjack.Game;
@@ -11,8 +13,9 @@ namespace Blackjack.Game;
 public partial class MainMenuScreen : BlackjackScreen
 {
     private FillFlowContainer buttonContainer;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private async void load()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -57,16 +60,40 @@ public partial class MainMenuScreen : BlackjackScreen
             {
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Action = () => Game.Exit(),
+                Action = exitGracefully,
                 Text = "Exit"
             }
         ]);
+        // StatefulSignalRClient.Connection.On<string>("ReceiveMessage", message =>
+        // {
+        //     Scheduler.Add(() =>
+        //     {
+        //         Console.WriteLine(message);
+        //     });
+        // });
+        // if (StatefulSignalRClient.Connection.State == HubConnectionState.Connected)
+        // {
+        //     await StatefulSignalRClient.Connection.InvokeAsync("SendMessage", "good morning");
+        // }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        var result = base.OnExiting(e);
+        exitGracefully();
+        return base.OnExiting(e);
+    }
+
+    private void exitGracefully()
+    {
+        // don't want to sever the connection, so queue a graceful disconnect
+        Scheduler.Add(async void () =>
+        {
+            do
+            {
+                await StatefulSignalRClient.Instance.Disconnect();
+            }
+            while (StatefulSignalRClient.Instance.ApiState.Value == ApiState.Online);
+        });
         Game.Exit();
-        return result;
     }
 }
