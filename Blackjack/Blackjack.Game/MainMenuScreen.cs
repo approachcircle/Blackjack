@@ -88,10 +88,11 @@ public partial class MainMenuScreen : BlackjackScreen
         // don't want to sever the connection, so queue a graceful disconnect
         Scheduler.Add(async void () =>
         {
-            while (StatefulSignalRClient.Instance.ApiState.Value == ApiState.Online)
+            do
             {
                 await StatefulSignalRClient.Instance.Disconnect();
             }
+            while (StatefulSignalRClient.Instance.ApiState.Value == ApiState.Online);
         });
         Game.Exit();
     }
