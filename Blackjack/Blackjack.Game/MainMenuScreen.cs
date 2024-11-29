@@ -80,7 +80,14 @@ public partial class MainMenuScreen : BlackjackScreen
     public override bool OnExiting(ScreenExitEvent e)
     {
         var result = base.OnExiting(e);
-        _ = StatefulSignalRClient.Instance.Disconnect();
+        // don't want to sever the connection, so queue a graceful disconnect
+        Scheduler.Add(async void () =>
+        {
+            while (StatefulSignalRClient.Instance.ApiState.Value == ApiState.Online)
+            {
+                await StatefulSignalRClient.Instance.Disconnect();
+            }
+        });
         Game.Exit();
         return result;
     }
