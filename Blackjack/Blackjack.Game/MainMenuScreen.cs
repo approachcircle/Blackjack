@@ -60,7 +60,7 @@ public partial class MainMenuScreen : BlackjackScreen
             {
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Action = () => Game.Exit(),
+                Action = exitGracefully,
                 Text = "Exit"
             }
         ]);
@@ -79,7 +79,12 @@ public partial class MainMenuScreen : BlackjackScreen
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        var result = base.OnExiting(e);
+        exitGracefully();
+        return base.OnExiting(e);
+    }
+
+    private void exitGracefully()
+    {
         // don't want to sever the connection, so queue a graceful disconnect
         Scheduler.Add(async void () =>
         {
@@ -89,6 +94,5 @@ public partial class MainMenuScreen : BlackjackScreen
             }
         });
         Game.Exit();
-        return result;
     }
 }
