@@ -30,7 +30,12 @@ public partial class ConnectionStateText : Container
         });
         StatefulSignalRClient.Instance.ApiState.BindValueChanged(e =>
         {
-            textBindable.Value = e.NewValue.ToString();
+            string buffer = e.NewValue.ToString();
+            if (e.NewValue == ApiState.Connecting)
+            {
+                buffer += "...";
+            }
+            textBindable.Value = buffer;
         });
         Add(text);
     }
