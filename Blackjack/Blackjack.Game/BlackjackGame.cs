@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Blackjack.Game.Online;
-using Microsoft.AspNetCore.SignalR.Client;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -41,6 +38,23 @@ namespace Blackjack.Game
             base.LoadComplete();
 
             screenStack.Push(new MainMenuScreen());
+        }
+
+        protected override bool OnExiting()
+        {
+            Scheduler.Add(async void () =>
+            {
+                int attempts = 0;
+                do
+                {
+                    if (attempts >= 5)
+                        break; // if we can't disconnect after 5 tries for some reason, just bail and forget about it
+                    await StatefulSignalRClient.Instance.Disconnect();
+                    attempts++;
+                }
+                while (StatefulSignalRClient.Instance.ApiState.Value == ApiState.Online);
+            });
+            return base.OnExiting();
         }
     }
 }

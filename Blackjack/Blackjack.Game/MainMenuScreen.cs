@@ -1,7 +1,4 @@
-﻿using System;
-using Blackjack.Game.Online;
-using Microsoft.AspNetCore.SignalR.Client;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Screens;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -60,40 +57,15 @@ public partial class MainMenuScreen : BlackjackScreen
             {
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Action = exitGracefully,
+                Action = Game.RequestExit,
                 Text = "Exit"
             }
         ]);
-        // StatefulSignalRClient.Connection.On<string>("ReceiveMessage", message =>
-        // {
-        //     Scheduler.Add(() =>
-        //     {
-        //         Console.WriteLine(message);
-        //     });
-        // });
-        // if (StatefulSignalRClient.Connection.State == HubConnectionState.Connected)
-        // {
-        //     await StatefulSignalRClient.Connection.InvokeAsync("SendMessage", "good morning");
-        // }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        exitGracefully();
+        Game.RequestExit();
         return base.OnExiting(e);
-    }
-
-    private void exitGracefully()
-    {
-        // don't want to sever the connection, so queue a graceful disconnect
-        Scheduler.Add(async void () =>
-        {
-            do
-            {
-                await StatefulSignalRClient.Instance.Disconnect();
-            }
-            while (StatefulSignalRClient.Instance.ApiState.Value == ApiState.Online);
-        });
-        Game.Exit();
     }
 }
